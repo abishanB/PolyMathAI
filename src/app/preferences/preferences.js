@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import "./preferences.css"
+import { useState } from "react";
+import "./preferences.css";
 //users pick their preffered times for their schedule.
-export default function SchedulePreferences({setPreferences, setStep}) {
-  const [dailyHours, setDailyHours] = useState(2)
-  const [selectedTimes, setSelectedTimes] = useState([])
+export default function SchedulePreferences({ setPreferences, setStep }) {
+  const [dailyHours, setDailyHours] = useState(2);
+  const [selectedTimes, setSelectedTimes] = useState([]);
 
   const timeSlots = [
     { id: "early-morning", label: "Early Morning (6-9 AM)" },
@@ -14,43 +14,43 @@ export default function SchedulePreferences({setPreferences, setStep}) {
     { id: "evening", label: "Evening (5-8 PM)" },
     { id: "night", label: "Night (8-11 PM)" },
     { id: "late-night", label: "Late Night (11 PM+)" },
-  ]
+  ];
 
   const handleTimeSlotChange = (timeSlotId) => {
     setSelectedTimes((prev) => {
       if (prev.includes(timeSlotId)) {
-        return prev.filter((id) => id !== timeSlotId)
+        return prev.filter((id) => id !== timeSlotId);
       } else {
-        return [...prev, timeSlotId]
+        return [...prev, timeSlotId];
       }
-    })
-  }
+    });
+  };
 
   const getSliderBackground = (value) => {
-    const percentage = ((value - 0.5) / 7.5) * 100
-    return `linear-gradient(to right, #8b5cf6 0%, #8b5cf6 ${percentage}%, #e5e7eb ${percentage}%, #e5e7eb 100%)`
-  }
+    const percentage = ((value - 0.5) / 7.5) * 100;
+    return `linear-gradient(to right, #8b5cf6 0%, #8b5cf6 ${percentage}%, #e5e7eb ${percentage}%, #e5e7eb 100%)`;
+  };
 
   const formatHours = (hours) => {
     if (hours < 1) {
-      return `${Math.round(hours * 60)} min`
+      return `${Math.round(hours * 60)} min`;
     } else {
-      return `${hours} hour${hours !== 1 ? "s" : ""}`
+      return `${hours} hour${hours !== 1 ? "s" : ""}`;
     }
-  }
+  };
 
   const goBack = () => {
-    console.log("Going back to step 2")
+    console.log("Going back to step 2");
     // Add navigation logic here
-  }
+  };
 
   const handleNextStep = () => {
     setPreferences({
       dailyHours: dailyHours,
-      selectedTimes: selectedTimes
-    })
-    setStep("createSchedule")
-  }
+      selectedTimes: selectedTimes,
+    });
+    setStep("createSchedule");
+  };
 
   return (
     <div className="app">
@@ -82,13 +82,16 @@ export default function SchedulePreferences({setPreferences, setStep}) {
             <div className="form-card">
               <h1 className="form-title">Schedule Preferences</h1>
               <p className="form-subtitle">
-                Tell us about your availability so we can create the perfect learning schedule.
+                Tell us about your availability so we can create the perfect
+                learning schedule.
               </p>
 
               <form className="schedule-form">
                 {/* Daily Hours Slider */}
                 <div className="form-group">
-                  <label className="form-label">How many hours per day can you dedicate to learning?</label>
+                  <label className="form-label">
+                    How many hours per day can you dedicate to learning?
+                  </label>
                   <div className="slider-section">
                     <div className="slider-container">
                       <input
@@ -99,21 +102,23 @@ export default function SchedulePreferences({setPreferences, setStep}) {
                         value={dailyHours}
                         className="time-slider"
                         style={{ background: getSliderBackground(dailyHours) }}
-                        onChange={(e) => setDailyHours(Number.parseFloat(e.target.value))}
+                        onChange={(e) =>
+                          setDailyHours(Number.parseFloat(e.target.value))
+                        }
                       />
-                      <div className="slider-labels">
-                        <span>30 min</span>
-                        <span>2 hours</span>
-                        <span>8 hours</span>
-                      </div>
+                     
                     </div>
-                    <div className="current-value">{formatHours(dailyHours)}</div>
+                    <div className="current-value">
+                      {formatHours(dailyHours)}
+                    </div>
                   </div>
                 </div>
 
                 {/* Time Preferences */}
                 <div className="form-group">
-                  <label className="form-label">When do you prefer to learn? (Select all that apply)</label>
+                  <label className="form-label">
+                    When do you prefer to learn? (Select all that apply)
+                  </label>
                   <div className="time-slots-grid">
                     {timeSlots.map((slot) => (
                       <label key={slot.id} className="time-slot-item">
@@ -130,10 +135,16 @@ export default function SchedulePreferences({setPreferences, setStep}) {
                 </div>
 
                 <div className="navigation">
-                  <button type="button" className="btn btn-back" onClick={goBack}>
+                  <button
+                    type="button"
+                    className="btn btn-back"
+                    onClick={goBack}>
                     Back
                   </button>
-                  <button type="button" className="btn btn-primary" onClick={handleNextStep}>
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={handleNextStep}>
                     Create My Schedule
                   </button>
                 </div>
@@ -142,8 +153,6 @@ export default function SchedulePreferences({setPreferences, setStep}) {
           </div>
         </section>
       </main>
-
-      
     </div>
-  )
+  );
 }

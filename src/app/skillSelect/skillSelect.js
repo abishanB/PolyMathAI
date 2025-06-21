@@ -1,5 +1,4 @@
 "use client";
-import { useState } from "react";
 import "./skillSelect.css";
 export default function SkillSelect({setSkills, setStep}) {
 
@@ -12,7 +11,12 @@ export default function SkillSelect({setSkills, setStep}) {
     );
     
   };
-
+  const musicSkills = ["Guitar", "Drums", "Piano", "Violin"]
+  const programmingSkills = ["Python", "Machine Learning", "JavaScript", "Web Development", "React", "Mobile Development"]
+  const languageSkills = ["Spanish", "Japanese", "French", "Mandarin", "German", "Italian"]
+  const artsDesignSkills = ["Drawing", "Photography", "Painting", "Graphic Design", "Digital Art", "UI/UX Design"]
+  const fitnessHealthSkills = ["Yoga", "Martial Arts", "Weight Training", "Dance", "Running", "Meditation"]
+  const academicSkills = ["Mathematics", "History", "Physics", "Philosophy", "Chemistry", "Literature"]
   const handleNextStep = () => {
     setStep("skillPriority")
   }
@@ -30,7 +34,7 @@ export default function SkillSelect({setSkills, setStep}) {
         </div>
       </header>
 
-      <main>
+      <div>
         <section class="progress-section">
           <div class="container">
             <div class="progress-label">Progress</div>
@@ -56,67 +60,20 @@ export default function SkillSelect({setSkills, setStep}) {
                     <span class="category-icon">🎵</span>
                     Music
                   </div>
+                  
                   <div class="skills-grid">
-                    <label class="skill-item">
+                    {musicSkills.map((skill, index) =>(
+                     <label class="skill-item">
                       <input
                         type="checkbox"
                         class="skill-checkbox"
                         name="skills"
-                        value="guitar"
+                        value={skill}
                         onChange={(e) => toggleSkill(e.target.value)}
                       />
-                      <span class="skill-label">Guitar</span>
+                      <span class="skill-label">{skill}</span>
                     </label>
-                    <label class="skill-item">
-                      <input
-                        type="checkbox"
-                        class="skill-checkbox"
-                        name="skills"
-                        value="drums"
-                        onChange={(e) => toggleSkill(e.target.value)}
-                      />
-                      <span class="skill-label">Drums</span>
-                    </label>
-                    <label class="skill-item">
-                      <input
-                        type="checkbox"
-                        class="skill-checkbox"
-                        name="skills"
-                        value="piano"
-                        onChange={(e) => toggleSkill(e.target.value)}
-                      />
-                      <span class="skill-label">Piano</span>
-                    </label>
-                    <label class="skill-item">
-                      <input
-                        type="checkbox"
-                        class="skill-checkbox"
-                        name="skills"
-                        value="singing"
-                        onChange={(e) => toggleSkill(e.target.value)}
-                      />
-                      <span class="skill-label">Singing</span>
-                    </label>
-                    <label class="skill-item">
-                      <input
-                        type="checkbox"
-                        class="skill-checkbox"
-                        name="skills"
-                        value="violin"
-                        onChange={(e) => toggleSkill(e.target.value)}
-                      />
-                      <span class="skill-label">Violin</span>
-                    </label>
-                    <label class="skill-item">
-                      <input
-                        type="checkbox"
-                        class="skill-checkbox"
-                        name="skills"
-                        value="music-theory"
-                        onChange={(e) => toggleSkill(e.target.value)}
-                      />
-                      <span class="skill-label">Music Theory</span>
-                    </label>
+                  ))}
                   </div>
                 </div>
 
@@ -126,66 +83,18 @@ export default function SkillSelect({setSkills, setStep}) {
                     Programming
                   </div>
                   <div class="skills-grid">
-                    <label class="skill-item">
+                    {programmingSkills.map((skill, index) =>(
+                     <label class="skill-item">
                       <input
                         type="checkbox"
                         class="skill-checkbox"
                         name="skills"
-                        value="python"
+                        value={skill}
                         onChange={(e) => toggleSkill(e.target.value)}
                       />
-                      <span class="skill-label">Python</span>
+                      <span class="skill-label">{skill}</span>
                     </label>
-                    <label class="skill-item">
-                      <input
-                        type="checkbox"
-                        class="skill-checkbox"
-                        name="skills"
-                        value="machine-learning"
-                        onChange={(e) => toggleSkill(e.target.value)}
-                      />
-                      <span class="skill-label">Machine Learning</span>
-                    </label>
-                    <label class="skill-item">
-                      <input
-                        type="checkbox"
-                        class="skill-checkbox"
-                        name="skills"
-                        value="javascript"
-                        onChange={(e) => toggleSkill(e.target.value)}
-                      />
-                      <span class="skill-label">JavaScript</span>
-                    </label>
-                    <label class="skill-item">
-                      <input
-                        type="checkbox"
-                        class="skill-checkbox"
-                        name="skills"
-                        value="web-development"
-                        onChange={(e) => toggleSkill(e.target.value)}
-                      />
-                      <span class="skill-label">Web Development</span>
-                    </label>
-                    <label class="skill-item">
-                      <input
-                        type="checkbox"
-                        class="skill-checkbox"
-                        name="skills"
-                        value="react"
-                        onChange={(e) => toggleSkill(e.target.value)}
-                      />
-                      <span class="skill-label">React</span>
-                    </label>
-                    <label class="skill-item">
-                      <input
-                        type="checkbox"
-                        class="skill-checkbox"
-                        name="skills"
-                        value="mobile-development"
-                        onChange={(e) => toggleSkill(e.target.value)}
-                      />
-                      <span class="skill-label">Mobile Development</span>
-                    </label>
+                  ))}
                   </div>
                 </div>
 
@@ -195,66 +104,18 @@ export default function SkillSelect({setSkills, setStep}) {
                     Languages
                   </div>
                   <div class="skills-grid">
-                    <label class="skill-item">
+                    {languageSkills.map((skill, index) =>(
+                     <label class="skill-item">
                       <input
                         type="checkbox"
                         class="skill-checkbox"
                         name="skills"
-                        value="spanish"
+                        value={skill}
                         onChange={(e) => toggleSkill(e.target.value)}
                       />
-                      <span class="skill-label">Spanish</span>
+                      <span class="skill-label">{skill}</span>
                     </label>
-                    <label class="skill-item">
-                      <input
-                        type="checkbox"
-                        class="skill-checkbox"
-                        name="skills"
-                        value="japanese"
-                        onChange={(e) => toggleSkill(e.target.value)}
-                      />
-                      <span class="skill-label">Japanese</span>
-                    </label>
-                    <label class="skill-item">
-                      <input
-                        type="checkbox"
-                        class="skill-checkbox"
-                        name="skills"
-                        value="french"
-                        onChange={(e) => toggleSkill(e.target.value)}
-                      />
-                      <span class="skill-label">French</span>
-                    </label>
-                    <label class="skill-item">
-                      <input
-                        type="checkbox"
-                        class="skill-checkbox"
-                        name="skills"
-                        value="mandarin"
-                        onChange={(e) => toggleSkill(e.target.value)}
-                      />
-                      <span class="skill-label">Mandarin</span>
-                    </label>
-                    <label class="skill-item">
-                      <input
-                        type="checkbox"
-                        class="skill-checkbox"
-                        name="skills"
-                        value="german"
-                        onChange={(e) => toggleSkill(e.target.value)}
-                      />
-                      <span class="skill-label">German</span>
-                    </label>
-                    <label class="skill-item">
-                      <input
-                        type="checkbox"
-                        class="skill-checkbox"
-                        name="skills"
-                        value="italian"
-                        onChange={(e) => toggleSkill(e.target.value)}
-                      />
-                      <span class="skill-label">Italian</span>
-                    </label>
+                  ))}
                   </div>
                 </div>
 
@@ -264,66 +125,18 @@ export default function SkillSelect({setSkills, setStep}) {
                     Arts & Design
                   </div>
                   <div class="skills-grid">
-                    <label class="skill-item">
+                    {artsDesignSkills.map((skill, index) =>(
+                     <label class="skill-item">
                       <input
                         type="checkbox"
                         class="skill-checkbox"
                         name="skills"
-                        value="drawing"
+                        value={skill}
                         onChange={(e) => toggleSkill(e.target.value)}
                       />
-                      <span class="skill-label">Drawing</span>
+                      <span class="skill-label">{skill}</span>
                     </label>
-                    <label class="skill-item">
-                      <input
-                        type="checkbox"
-                        class="skill-checkbox"
-                        name="skills"
-                        value="photography"
-                        onChange={(e) => toggleSkill(e.target.value)}
-                      />
-                      <span class="skill-label">Photography</span>
-                    </label>
-                    <label class="skill-item">
-                      <input
-                        type="checkbox"
-                        class="skill-checkbox"
-                        name="skills"
-                        value="painting"
-                        onChange={(e) => toggleSkill(e.target.value)}
-                      />
-                      <span class="skill-label">Painting</span>
-                    </label>
-                    <label class="skill-item">
-                      <input
-                        type="checkbox"
-                        class="skill-checkbox"
-                        name="skills"
-                        value="graphic-design"
-                        onChange={(e) => toggleSkill(e.target.value)}
-                      />
-                      <span class="skill-label">Graphic Design</span>
-                    </label>
-                    <label class="skill-item">
-                      <input
-                        type="checkbox"
-                        class="skill-checkbox"
-                        name="skills"
-                        value="digital-art"
-                        onChange={(e) => toggleSkill(e.target.value)}
-                      />
-                      <span class="skill-label">Digital Art</span>
-                    </label>
-                    <label class="skill-item">
-                      <input
-                        type="checkbox"
-                        class="skill-checkbox"
-                        name="skills"
-                        value="uiux-design"
-                        onChange={(e) => toggleSkill(e.target.value)}
-                      />
-                      <span class="skill-label">UI/UX Design</span>
-                    </label>
+                  ))}
                   </div>
                 </div>
 
@@ -333,65 +146,18 @@ export default function SkillSelect({setSkills, setStep}) {
                     Academic
                   </div>
                   <div class="skills-grid">
-                    <label class="skill-item">
+                    {academicSkills.map((skill, index) =>(
+                     <label class="skill-item">
                       <input
                         type="checkbox"
                         class="skill-checkbox"
                         name="skills"
-                        value="mathematics"
+                        value={skill}
                         onChange={(e) => toggleSkill(e.target.value)}
                       />
-                      <span class="skill-label">Mathematics</span>
+                      <span class="skill-label">{skill}</span>
                     </label>
-                    <label class="skill-item">
-                      <input
-                        type="checkbox"
-                        class="skill-checkbox"
-                        name="skills"
-                        value="history"
-                        onChange={(e) => toggleSkill(e.target.value)}
-                      />
-                      <span class="skill-label">History</span>
-                    </label>
-                    <label class="skill-item">
-                      <input
-                        type="checkbox"
-                        class="skill-checkbox"
-                        name="skills"
-                        value="physics"
-                        onChange={(e) => toggleSkill(e.target.value)}
-                      />
-                      <span class="skill-label">Physics</span>
-                    </label>
-                    <label class="skill-item">
-                      <input
-                        type="checkbox"
-                        class="skill-checkbox"
-                        name="skills"
-                        value="philosophy"
-                      />
-                      <span class="skill-label">Philosophy</span>
-                    </label>
-                    <label class="skill-item">
-                      <input
-                        type="checkbox"
-                        class="skill-checkbox"
-                        name="skills"
-                        value="chemistry"
-                        onChange={(e) => toggleSkill(e.target.value)}
-                      />
-                      <span class="skill-label">Chemistry</span>
-                    </label>
-                    <label class="skill-item">
-                      <input
-                        type="checkbox"
-                        class="skill-checkbox"
-                        name="skills"
-                        value="literature"
-                        onChange={(e) => toggleSkill(e.target.value)}
-                      />
-                      <span class="skill-label">Literature</span>
-                    </label>
+                  ))}
                   </div>
                 </div>
 
@@ -401,137 +167,21 @@ export default function SkillSelect({setSkills, setStep}) {
                     Fitness & Health
                   </div>
                   <div class="skills-grid">
-                    <label class="skill-item">
+                    {fitnessHealthSkills.map((skill, index) =>(
+                     <label class="skill-item">
                       <input
                         type="checkbox"
                         class="skill-checkbox"
                         name="skills"
-                        value="yoga"
+                        value={skill}
                         onChange={(e) => toggleSkill(e.target.value)}
                       />
-                      <span class="skill-label">Yoga</span>
+                      <span class="skill-label">{skill}</span>
                     </label>
-                    <label class="skill-item">
-                      <input
-                        type="checkbox"
-                        class="skill-checkbox"
-                        name="skills"
-                        value="martial-arts"
-                        onChange={(e) => toggleSkill(e.target.value)}
-                      />
-                      <span class="skill-label">Martial Arts</span>
-                    </label>
-                    <label class="skill-item">
-                      <input
-                        type="checkbox"
-                        class="skill-checkbox"
-                        name="skills"
-                        value="weight-training"
-                        onChange={(e) => toggleSkill(e.target.value)}
-                      />
-                      <span class="skill-label">Weight Training</span>
-                    </label>
-                    <label class="skill-item">
-                      <input
-                        type="checkbox"
-                        class="skill-checkbox"
-                        name="skills"
-                        value="dance"
-                        onChange={(e) => toggleSkill(e.target.value)}
-                      />
-                      <span class="skill-label">Dance</span>
-                    </label>
-                    <label class="skill-item">
-                      <input
-                        type="checkbox"
-                        class="skill-checkbox"
-                        name="skills"
-                        value="running"
-                        onChange={(e) => toggleSkill(e.target.value)}
-                      />
-                      <span class="skill-label">Running</span>
-                    </label>
-                    <label class="skill-item">
-                      <input
-                        type="checkbox"
-                        class="skill-checkbox"
-                        name="skills"
-                        value="meditation"
-                        onChange={(e) => toggleSkill(e.target.value)}
-                      />
-                      <span class="skill-label">Meditation</span>
-                    </label>
+                  ))}
                   </div>
                 </div>
 
-                <div class="category">
-                  <div class="category-header">
-                    <span class="category-icon">🔧</span>
-                    Practical Skills
-                  </div>
-                  <div class="skills-grid">
-                    <label class="skill-item">
-                      <input
-                        type="checkbox"
-                        class="skill-checkbox"
-                        name="skills"
-                        value="cooking"
-                        onChange={(e) => toggleSkill(e.target.value)}
-                      />
-                      <span class="skill-label">Cooking</span>
-                    </label>
-                    <label class="skill-item">
-                      <input
-                        type="checkbox"
-                        class="skill-checkbox"
-                        name="skills"
-                        value="car-maintenance"
-                        onChange={(e) => toggleSkill(e.target.value)}
-                      />
-                      <span class="skill-label">Car Maintenance</span>
-                    </label>
-                    <label class="skill-item">
-                      <input
-                        type="checkbox"
-                        class="skill-checkbox"
-                        name="skills"
-                        value="woodworking"
-                        onChange={(e) => toggleSkill(e.target.value)}
-                      />
-                      <span class="skill-label">Woodworking</span>
-                    </label>
-                    <label class="skill-item">
-                      <input
-                        type="checkbox"
-                        class="skill-checkbox"
-                        name="skills"
-                        value="home-repair"
-                        onChange={(e) => toggleSkill(e.target.value)}
-                      />
-                      <span class="skill-label">Home Repair</span>
-                    </label>
-                    <label class="skill-item">
-                      <input
-                        type="checkbox"
-                        class="skill-checkbox"
-                        name="skills"
-                        value="gardening"
-                        onChange={(e) => toggleSkill(e.target.value)}
-                      />
-                      <span class="skill-label">Gardening</span>
-                    </label>
-                    <label class="skill-item">
-                      <input
-                        type="checkbox"
-                        class="skill-checkbox"
-                        name="skills"
-                        value="electronics"
-                        onChange={(e) => toggleSkill(e.target.value)}
-                      />
-                      <span class="skill-label">Electronics</span>
-                    </label>
-                  </div>
-                </div>
                 <div className="navigation">
                   <button onClick={handleNextStep} type="button" className="btn btn-primary">
                     Next Step
@@ -541,7 +191,7 @@ export default function SkillSelect({setSkills, setStep}) {
             </div>
           </div>
         </section>
-      </main>
+      </div>
     </div>
   );
 }

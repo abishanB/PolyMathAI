@@ -1,14 +1,15 @@
-"use client"
+"use client";
 import "./skillPriority.css";
 import { useState } from "react";
 
-export default function SkillPriority({skills, setSkillPriority, setStep}) {
-  const [priorities, setPriorities] = useState(//set each skills initally to 5/10
-  skills.reduce((acc, skill) => {
-    acc[skill] = 5
-    return acc
-  }, {})
-)
+export default function SkillPriority({ skills, setSkillPriority, setStep }) {
+  const [priorities, setPriorities] = useState(
+    //set each skills initally to 5/10
+    skills.reduce((acc, skill) => {
+      acc[skill] = 5;
+      return acc;
+    }, {})
+  );
   const updatePriority = (skill, value) => {
     setPriorities((prev) => ({
       ...prev,
@@ -22,8 +23,8 @@ export default function SkillPriority({skills, setSkillPriority, setStep}) {
   };
 
   const handleNextStep = () => {
-    setSkillPriority(priorities)
-    setStep("preferences")
+    setSkillPriority(priorities);
+    setStep("preferences");
   };
 
   const getSliderBackground = (value) => {
@@ -69,30 +70,26 @@ export default function SkillPriority({skills, setSkillPriority, setStep}) {
                 <div className="priorities-list">
                   {skills.map((item, index) => (
                     <div key={index} className="priority-item">
-                    <div className="priority-header">
-                      <span className="skill-name">{item}</span>
-                      <span className="priority-value">
-                        Priority: {priorities[item]}/10
-                      </span>
+                      <div className="priority-header">
+                        <span className="skill-name">{item}</span>
+                        <span className="priority-value">
+                          Priority: {priorities[item]}/10
+                        </span>
+                      </div>
+                      <div className="slider-container">
+                        <input
+                          type="range"
+                          min="1"
+                          max="10"
+                          value={priorities[item]}
+                          className="priority-slider"
+                          style={{
+                            background: getSliderBackground(priorities[item]),
+                          }}
+                          onChange={(e) => updatePriority(item, e.target.value)}
+                        />
+                      </div>
                     </div>
-                    <div className="slider-container">
-                      <input
-                        type="range"
-                        min="1"
-                        max="10"
-                        value={priorities[item]}
-                        className="priority-slider"
-                        style={{
-                          background: getSliderBackground(
-                            priorities[item]
-                          ),
-                        }}
-                        onChange={(e) =>
-                          updatePriority(item, e.target.value)
-                        }
-                      />
-                    </div>
-                  </div>
                   ))}
                 </div>
 
