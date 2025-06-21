@@ -13,17 +13,45 @@ export default function Home() {
   const [showAuth, setShowAuth] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       setSession(session);
+      
+      // If user is already logged in, check onboarding status
+      if (session) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('onboarding_completed')
+          .eq('id', session.user.id)
+          .single();
+        
+        if (!profile?.onboarding_completed) {
+          router.push("/onboarding");
+        } else {
+          router.push("/dashboard");
+        }
+      }
     });
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
       setSession(session);
       if (session) {
         setShowAuth(false);
-        router.push("/dashboard");
+        
+        // Check if user has completed onboarding
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('onboarding_completed')
+          .eq('id', session.user.id)
+          .single();
+        
+        // If new signup or onboarding not completed, go to onboarding
+        if (event === 'SIGNED_UP' || !profile?.onboarding_completed) {
+          router.push("/onboarding");
+        } else {
+          router.push("/dashboard");
+        }
       }
     });
 
@@ -31,7 +59,7 @@ export default function Home() {
   }, [router]);
 
   const handleClick = () => {
-    router.push("/onboarding");
+    setShowAuth(true);
   };
 
   const handleSignIn = () => {
@@ -70,9 +98,6 @@ export default function Home() {
               <button onClick={handleSignIn} className="btn btn-outline">
                 Sign In
               </button>
-              <button onClick={handleClick} className="btn btn-primary">
-                Get Started
-              </button>
             </div>
           </div>
         </div>
@@ -94,26 +119,156 @@ export default function Home() {
               <button onClick={handleClick} className="btn btn-cta btn-primary">
                 Start Learning Today
               </button>
-              <a href="#" className="btn btn-cta btn-secondary">
-                Watch Demo
-              </a>
             </div>
           </div>
         </section>
 
-        <section className="secondary-section">
+        <section className="features-section">
           <div className="container">
-            <h2>AI-Powered Learning for Polymaths</h2>
+            <div className="features-header">
+              <h2>AI-Powered Learning for Polymaths</h2>
+              <p>
+                Stop juggling multiple learning goals. Let our AI create the
+                perfect schedule that adapts to your pace, preferences, and
+                progress across all your interests.
+              </p>
+            </div>
+
+            <div className="features-grid">
+              <div className="feature-card feature-card-purple">
+                <div className="feature-icon feature-icon-purple">
+                  <span>🧠</span>
+                </div>
+                <h3>Smart Scheduling</h3>
+                <p>
+                  AI analyzes your goals, availability, and learning patterns to create optimal practice schedules.
+                </p>
+              </div>
+
+              <div className="feature-card feature-card-blue">
+                <div className="feature-icon feature-icon-blue">
+                  <span>🎯</span>
+                </div>
+                <h3>Multi-Skill Balance</h3>
+                <p>
+                  Learn guitar, coding, languages, and more - all balanced perfectly to maximize your progress.
+                </p>
+              </div>
+
+              <div className="feature-card feature-card-green">
+                <div className="feature-icon feature-icon-green">
+                  <span>📈</span>
+                </div>
+                <h3>Progress Tracking</h3>
+                <p>
+                  Visual progress tracking and adaptive scheduling that evolves with your learning journey.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="how-it-works-section">
+          <div className="container">
+            <div className="how-it-works-header">
+              <h2>How It Works</h2>
+              <p>Three simple steps to optimize your learning</p>
+            </div>
+
+            <div className="steps-grid">
+              <div className="step">
+                <div className="step-number step-number-purple">
+                  <span>1</span>
+                </div>
+                <h3>Choose Your Skills</h3>
+                <p>
+                  Select the skills you want to learn - from music and languages to coding and art.
+                </p>
+              </div>
+
+              <div className="step">
+                <div className="step-number step-number-blue">
+                  <span>2</span>
+                </div>
+                <h3>Set Your Availability</h3>
+                <p>
+                  Tell us when you're free to learn and how much time you want to dedicate to each skill.
+                </p>
+              </div>
+
+              <div className="step">
+                <div className="step-number step-number-green">
+                  <span>3</span>
+                </div>
+                <h3>Follow Your AI Schedule</h3>
+                <p>
+                  Get personalized daily schedules that adapt to your progress and optimize your learning.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="schedule-preview-section">
+          <div className="container">
+            <div className="schedule-preview-header">
+              <h2>Your AI-Generated Schedule</h2>
+              <p>Here's what a typical day might look like</p>
+            </div>
+
+            <div className="schedule-card">
+              <div className="schedule-header">
+                <span>📅</span>
+                <h3>Today's Learning Schedule</h3>
+              </div>
+              <div className="schedule-content">
+                <div className="schedule-item schedule-item-purple">
+                  <div className="schedule-item-content">
+                    <span className="schedule-item-icon">🕐</span>
+                    <div>
+                      <div className="schedule-item-title">Guitar Practice</div>
+                      <div className="schedule-item-subtitle">Chord progressions & scales</div>
+                    </div>
+                  </div>
+                  <div className="schedule-item-time">5:00 PM - 6:00 PM</div>
+                </div>
+
+                <div className="schedule-item schedule-item-blue">
+                  <div className="schedule-item-content">
+                    <span className="schedule-item-icon">🕐</span>
+                    <div>
+                      <div className="schedule-item-title">Python Coding</div>
+                      <div className="schedule-item-subtitle">Data structures practice</div>
+                    </div>
+                  </div>
+                  <div className="schedule-item-time">7:30 PM - 8:30 PM</div>
+                </div>
+
+                <div className="schedule-item schedule-item-green">
+                  <div className="schedule-item-content">
+                    <span className="schedule-item-icon">🕐</span>
+                    <div>
+                      <div className="schedule-item-title">Spanish Learning</div>
+                      <div className="schedule-item-subtitle">Conversation practice</div>
+                    </div>
+                  </div>
+                  <div className="schedule-item-time">9:00 PM - 9:30 PM</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="final-cta-section">
+          <div className="container">
+            <h2>Ready to Become a Modern Polymath?</h2>
             <p>
-              Stop juggling multiple learning goals. Let our AI create the
-              perfect schedule that adapts to your pace, preferences, and
-              progress across all your interests.
+              Join thousands of learners who are mastering multiple skills with AI-powered scheduling.
             </p>
           </div>
         </section>
       </main>
 
-      <div className="floating-icon">N</div>
     </div>
   );
 }
