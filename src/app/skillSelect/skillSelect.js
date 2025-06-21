@@ -183,6 +183,9 @@ export default function SkillSelect({setSkills, setStep}) {
                 </div>
 
                 <div className="navigation">
+                   <button style={{visibility:'hidden'}}>
+                  
+                  </button>
                   <button onClick={handleNextStep} type="button" className="btn btn-primary">
                     Next Step
                   </button>

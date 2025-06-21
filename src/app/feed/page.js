@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from './feed.module.css';
+import Navbar from '../components/Navbar';
 
 const posts = [
     {
@@ -30,23 +31,26 @@ const posts = [
 
 export default function FeedPage() {
     return (
-        <main className={styles.feedContainer}>
-            <h1 className={styles.title}>Timeline</h1>
-            <div className={styles.feedList}>
-                {posts.map(post => (
-                    <div key={post.id} className={styles.postCard}>
-                        <div className={styles.postHeader}>
-                            <img src={post.avatar} alt={post.user} className={styles.avatar} />
-                            <div>
-                                <span className={styles.user}>{post.user}</span>
-                                <span className={styles.time}>{post.time}</span>
+        <div className="feed-page">
+            <Navbar />
+            <main className={styles.feedContainer}>
+                <h1 className={styles.title}>Timeline</h1>
+                <div className={styles.feedList}>
+                    {posts.map(post => (
+                        <div key={post.id} className={styles.postCard}>
+                            <div className={styles.postHeader}>
+                                <img src={post.avatar} alt={post.user} className={styles.avatar} />
+                                <div>
+                                    <span className={styles.user}>{post.user}</span>
+                                    <span className={styles.time}>{post.time}</span>
+                                </div>
                             </div>
+                            <div className={styles.content}>{post.content}</div>
+                            {post.image && <img src={post.image} alt="post" className={styles.postImage} />}
                         </div>
-                        <div className={styles.content}>{post.content}</div>
-                        {post.image && <img src={post.image} alt="post" className={styles.postImage} />}
-                    </div>
-                ))}
-            </div>
-        </main>
+                    ))}
+                </div>
+            </main>
+        </div>
     );
 }

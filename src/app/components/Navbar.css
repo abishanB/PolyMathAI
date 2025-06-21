@@ -28,7 +28,6 @@
     justify-content: space-between;
 }
 
-.nav-brand,
 .calendar-nav-brand,
 .skills-nav-brand {
     display: flex;
@@ -36,6 +35,14 @@
     gap: 0.5rem;
 }
 
+
+.nav-brand{
+    gap:8px;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    
+}
 .nav-title,
 .calendar-nav-title,
 .skills-nav-title {

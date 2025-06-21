@@ -40,7 +40,7 @@ export default function SchedulePreferences({ setPreferences, setStep, onComplet
   };
 
   const goBack = () => {
-    console.log("Going back to step 2");
+    setStep("skillPriority")
     // Add navigation logic here
   };
 
