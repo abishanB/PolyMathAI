@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Navbar from "../components/Navbar";
 import "./year-review.css";
 
 export default function YearReviewPage() {
@@ -111,25 +112,7 @@ export default function YearReviewPage() {
 
   return (
     <div className="year-review">
-      {/* Navigation */}
-      <nav className="year-review-nav">
-        <div className="year-nav-content">
-          <Link href="/dashboard" className="back-link">
-            <span className="back-icon">🧠</span>
-            <span>Back to Dashboard</span>
-          </Link>
-          <div className="nav-actions">
-            <button className="nav-btn">
-              <span className="nav-btn-icon">📤</span>
-              Share
-            </button>
-            <button className="nav-btn">
-              <span className="nav-btn-icon">⬇️</span>
-              Download
-            </button>
-          </div>
-        </div>
-      </nav>
+      <Navbar variant="year-review" />
 
       {/* Progress Indicator */}
       <div className="progress-indicator">
@@ -234,8 +217,8 @@ export default function YearReviewPage() {
                     </div>
                     <div className="skill-progress">
                       <div className="skill-progress-bar">
-                        <div 
-                          className="skill-progress-fill" 
+                        <div
+                          className="skill-progress-fill"
                           style={{ width: `${skill.level}%` }}
                         ></div>
                       </div>
