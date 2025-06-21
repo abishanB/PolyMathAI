@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import "./calendar.css";
+import Navbar from "../components/Navbar";
 
 const formatTo12Hour = (time24) => {
   const [hours, minutes] = time24.split(":").map(Number);
@@ -103,26 +104,7 @@ export default function CalendarPage() {
 
   return (
     <div className="calendar-page">
-      {/* Navigation */}
-      <nav className="calendar-nav">
-        <div className="calendar-nav-container">
-          <div className="calendar-nav-content">
-            <Link href="/dashboard" className="calendar-nav-brand">
-              <span className="calendar-nav-icon">🧠</span>
-              <h1 className="calendar-nav-title">PolymathAI</h1>
-            </Link>
-            <div className="calendar-nav-links">
-              <Link href="/dashboard">
-                <button className="nav-btn">Dashboard</button>
-              </Link>
-              <Link href="/skills">
-                <button className="nav-btn">Skills</button>
-              </Link>
-              <button className="nav-btn">Settings</button>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <Navbar variant="calendar" />
 
       <div className="calendar-container">
         {/* Header */}
@@ -176,15 +158,13 @@ export default function CalendarPage() {
                       {daySchedule.map((item) => (
                         <div
                           key={item.id}
-                          className={`calendar-session ${
-                            item.completed ? "calendar-session-completed" : "calendar-session-pending"
-                          }`}
+                          className={`calendar-session ${item.completed ? "calendar-session-completed" : "calendar-session-pending"
+                            }`}
                         >
                           <span className={`session-badge ${getSkillColor(item.skill)}`}>{item.skill}</span>
                           <div
-                            className={`session-task ${
-                              item.completed ? "session-task-completed" : "session-task-pending"
-                            }`}
+                            className={`session-task ${item.completed ? "session-task-completed" : "session-task-pending"
+                              }`}
                           >
                             {item.task}
                           </div>

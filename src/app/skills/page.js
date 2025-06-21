@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import "./skills.css";
+import Navbar from '../components/Navbar';
 
 export default function SkillsPage() {
   const [userProfile, setUserProfile] = useState(null);
@@ -74,26 +75,7 @@ export default function SkillsPage() {
 
   return (
     <div className="skills-page">
-      {/* Navigation */}
-      <nav className="skills-nav">
-        <div className="skills-nav-container">
-          <div className="skills-nav-content">
-            <Link href="/dashboard" className="skills-nav-brand">
-              <span className="skills-nav-icon">🧠</span>
-              <h1 className="skills-nav-title">PolymathAI</h1>
-            </Link>
-            <div className="skills-nav-links">
-              <Link href="/dashboard">
-                <button className="nav-btn">Dashboard</button>
-              </Link>
-              <Link href="/calendar">
-                <button className="nav-btn">Calendar</button>
-              </Link>
-              <button className="nav-btn">Settings</button>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <Navbar variant="skills" />
 
       <div className="skills-container">
         {/* Header */}
@@ -186,8 +168,8 @@ export default function SkillsPage() {
                       <span>{skillData.level}%</span>
                     </div>
                     <div className="skill-progress-bar">
-                      <div 
-                        className="skill-progress-fill" 
+                      <div
+                        className="skill-progress-fill"
                         style={{ width: `${skillData.level}%` }}
                       ></div>
                     </div>

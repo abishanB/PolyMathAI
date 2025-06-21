@@ -1,0 +1,87 @@
+/* You can move or merge these styles into your main CSS files as needed */
+.dashboard-nav,
+.calendar-nav,
+.skills-nav,
+.year-review-nav {
+    background: #fff;
+    border-bottom: 1px solid #eee;
+    padding: 0.5rem 0;
+    margin-bottom: 1rem;
+}
+
+.nav-container,
+.calendar-nav-container,
+.skills-nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.nav-content,
+.calendar-nav-content,
+.skills-nav-content {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.nav-brand,
+.calendar-nav-brand,
+.skills-nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.nav-title,
+.calendar-nav-title,
+.skills-nav-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.nav-links,
+.calendar-nav-links,
+.skills-nav-links {
+    display: flex;
+    gap: 1rem;
+}
+
+.nav-btn,
+.calendar-nav-btn,
+.skills-nav-btn {
+    background: none;
+    border: none;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.nav-btn:hover,
+.calendar-nav-btn:hover,
+.skills-nav-btn:hover {
+    background: #f0f0f0;
+}
+
+.back-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+}
+
+.nav-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.nav-btn-icon {
+    margin-right: 0.3rem;
+}

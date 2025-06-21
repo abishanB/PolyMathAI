@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import "./dashboard.css";
 import React from "react";
+import Navbar from "../components/Navbar";
 
 const formatTo12Hour = (time24) => {
   const [hours, minutes] = time24.split(":").map(Number);
@@ -260,33 +261,7 @@ export default function DashboardPage() {
 
   return (
     <div className="dashboard">
-      {/* Navigation */}
-      <nav className="dashboard-nav">
-        <div className="nav-container">
-          <div className="nav-content">
-            <div className="nav-brand">
-              <div className="nav-icon">🧠</div>
-              <h1 className="nav-title">PolymathAI</h1>
-            </div>
-            <div className="nav-links">
-              <Link href="/skills">
-                <button className="nav-btn">Skills</button>
-              </Link>
-              <Link href="/calendar">
-                <button className="nav-btn">Calendar</button>
-              </Link>
-              <button className="nav-btn">Settings</button>
-              <Link href="/feed">
-                <button className="nav-btn">Feed</button>
-              </Link>
-              <Link href="/journal">
-                <button className="nav-btn">Journal</button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </nav>
-
+      <Navbar variant="dashboard" />
       <div className="dashboard-container">
         {/* Header */}
         <div className="dashboard-header">
