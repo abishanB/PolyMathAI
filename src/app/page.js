@@ -1,57 +1,60 @@
-"use client"
-import "./globals.css"
-import { useRouter } from 'next/navigation'
-import Link from 'next/link'
-import { useState, useEffect } from 'react'
-import { supabase } from '../lib/supabase'
-import { Auth } from '@supabase/auth-ui-react'
-import { ThemeSupa } from '@supabase/auth-ui-shared'
+"use client";
+import "./globals.css";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { useState, useEffect } from "react";
+import { supabase } from "../lib/supabase";
+import { Auth } from "@supabase/auth-ui-react";
+import { ThemeSupa } from "@supabase/auth-ui-shared";
+import Image from "next/image";
 export default function Home() {
-  const router = useRouter()
-  const [session, setSession] = useState(null)
-  const [showAuth, setShowAuth] = useState(false)
-  
+  const router = useRouter();
+  const [session, setSession] = useState(null);
+  const [showAuth, setShowAuth] = useState(false);
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
-    })
+      setSession(session);
+    });
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session)
+      setSession(session);
       if (session) {
-        setShowAuth(false)
-        router.push('/dashboard')
+        setShowAuth(false);
+        router.push("/dashboard");
       }
-    })
+    });
 
-    return () => subscription.unsubscribe()
-  }, [router])
-  
+    return () => subscription.unsubscribe();
+  }, [router]);
+
   const handleClick = () => {
-    router.push('/onboarding')
-  }
-  
+    router.push("/onboarding");
+  };
+
   const handleSignIn = () => {
-    setShowAuth(true)
-  }
+    setShowAuth(true);
+  };
   if (showAuth) {
     return (
       <div className="auth-container">
         <div className="auth-wrapper">
           <h2>Welcome to PolymathAI</h2>
-          <Auth 
-            supabaseClient={supabase} 
+          <Auth
+            supabaseClient={supabase}
             appearance={{ theme: ThemeSupa }}
-            providers={['google', 'github']}
+            providers={["google", "github"]}
           />
-          <button onClick={() => setShowAuth(false)} className="btn btn-outline">
+          <button
+            onClick={() => setShowAuth(false)}
+            className="btn btn-outline">
             Back to Home
           </button>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -59,10 +62,10 @@ export default function Home() {
       <header>
         <div className="container">
           <div className="header-content">
-            <a href="#" className="logo">
-              <div className="logo-icon">P</div>
-              PolymathAI
-            </a>
+            <div className="nav-brand">
+              <Image src="/images/logo.png" alt="Logo" width={40} height={40} />
+              <h1 className="nav-title">PolymathAI</h1>
+            </div>
             <div className="nav-buttons">
               <button onClick={handleSignIn} className="btn btn-outline">
                 Sign In
