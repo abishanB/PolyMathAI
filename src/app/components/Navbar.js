@@ -1,8 +1,29 @@
+"use client";
 import Link from "next/link";
 import "./Navbar.css";
 import Image from "next/image";
 import logo from "./logo.png";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { supabase } from "../../lib/supabase";
+
 export default function Navbar() {
+  const [showSettingsDropdown, setShowSettingsDropdown] = useState(false);
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    try {
+      await supabase.auth.signOut();
+      router.push('/');
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
+
+  const toggleSettingsDropdown = () => {
+    setShowSettingsDropdown(!showSettingsDropdown);
+  };
+
   return (
     <nav className="dashboard-nav">
       <div className="nav-container">
@@ -18,7 +39,24 @@ export default function Navbar() {
             <Link href="/calendar">
               <button className="nav-btn">Calendar</button>
             </Link>
-            <button className="nav-btn">Settings</button>
+            <div className="settings-dropdown">
+              <button 
+                onClick={toggleSettingsDropdown} 
+                className="nav-btn settings-btn"
+              >
+                Settings
+              </button>
+              {showSettingsDropdown && (
+                <div className="dropdown-menu">
+                  <button 
+                    onClick={handleSignOut} 
+                    className="dropdown-item sign-out-btn"
+                  >
+                    Sign Out
+                  </button>
+                </div>
+              )}
+            </div>
             <Link href="/feed">
               <button className="nav-btn">Feed</button>
             </Link>
