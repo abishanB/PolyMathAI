@@ -83,20 +83,11 @@ export default function JournalPage() {
             <Navbar />
             <div style={{ maxWidth: 700, margin: "40px auto", padding: 24 }}>
 
-                <h1 style={{ fontSize: 32, marginBottom: 16 }}>📝 Journal</h1>
+                <h1 style={{ fontSize: 32, marginBottom: 16 }}>Journal</h1>
                 <p style={{ marginBottom: 32 }}>
                     Here are your progress logs for completed tasks. Keep up the great work!
                 </p>
-                <button
-                    className="btn btn-danger"
-                    style={{ marginBottom: 24 }}
-                    onClick={() => {
-                        localStorage.removeItem("progressLogs");
-                        setLogs([]);
-                    }}
-                >
-                    Clear Logs (Testing Use)
-                </button>
+
                 {logs.length === 0 ? (
                     <div style={{ color: "#888" }}>No progress logs yet.</div>
                 ) : (
@@ -122,7 +113,18 @@ export default function JournalPage() {
                     <Link href="/dashboard">
                         <button className="btn btn-secondary">← Back to Dashboard</button>
                     </Link>
+
                 </div>
+                <button
+                    className="btn btn-danger"
+                    style={{ marginBottom: 24 }}
+                    onClick={() => {
+                        localStorage.removeItem("progressLogs");
+                        setLogs([]);
+                    }}
+                >
+                    Clear Logs (Testing Use)
+                </button>
             </div>
         </div>
     );

@@ -29,7 +29,9 @@ export default function Navbar() {
         <div className="nav-content">
           <div className="nav-brand">
             <Image src="/images/logo.png" alt="Logo" width={40} height={40} />
-            <h1 className="nav-title">PolymathAI</h1>
+            <Link href="/dashboard">
+              <h1 className="nav-title" >PolymathAI</h1>
+            </Link>
           </div>
           <div className="nav-links">
             <Link href="/skills">
@@ -39,16 +41,16 @@ export default function Navbar() {
               <button className="nav-btn">Calendar</button>
             </Link>
             <div className="settings-dropdown">
-              <button 
-                onClick={toggleSettingsDropdown} 
+              <button
+                onClick={toggleSettingsDropdown}
                 className="nav-btn settings-btn"
               >
                 Settings
               </button>
               {showSettingsDropdown && (
                 <div className="dropdown-menu">
-                  <button 
-                    onClick={handleSignOut} 
+                  <button
+                    onClick={handleSignOut}
                     className="dropdown-item sign-out-btn"
                   >
                     Sign Out
