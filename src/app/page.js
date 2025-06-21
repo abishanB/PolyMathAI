@@ -113,7 +113,6 @@ export default function Home() {
         </section>
       </main>
 
-      <div className="floating-icon">N</div>
     </div>
   );
 }
