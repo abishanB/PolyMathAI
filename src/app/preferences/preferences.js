@@ -3,7 +3,7 @@
 import { useState } from "react";
 import "./preferences.css";
 //users pick their preffered times for their schedule.
-export default function SchedulePreferences({ setPreferences, setStep }) {
+export default function SchedulePreferences({ setPreferences, setStep, onComplete }) {
   const [dailyHours, setDailyHours] = useState(2);
   const [selectedTimes, setSelectedTimes] = useState([]);
 
@@ -45,11 +45,18 @@ export default function SchedulePreferences({ setPreferences, setStep }) {
   };
 
   const handleNextStep = () => {
-    setPreferences({
+    const preferencesData = {
       dailyHours: dailyHours,
       selectedTimes: selectedTimes,
-    });
-    setStep("createSchedule");
+    };
+    setPreferences(preferencesData);
+    
+    // If onComplete function is provided, call it instead of setting step
+    if (onComplete) {
+      onComplete();
+    } else {
+      setStep("createSchedule");
+    }
   };
 
   return (
