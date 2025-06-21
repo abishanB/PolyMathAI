@@ -18,7 +18,7 @@ export default function SkillPriority({ skills, setSkillPriority, setStep }) {
   };
 
   const goBack = () => {
-    console.log("Going back to step 1");
+    setStep("skillSelect");
     // Add navigation logic here
   };
 
