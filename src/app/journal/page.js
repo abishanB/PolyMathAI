@@ -13,11 +13,13 @@ export default function JournalPage() {
     }, []);
 
     useEffect(() => {
-        // Fetch feedback for each log if not already fetched
+        // Fetch feedback for each log if not already present
         const fetchFeedbacks = async () => {
-            const newFeedbacks = { ...feedbacks };
-            for (const log of logs) {
-                if (!newFeedbacks[log.id]) {
+            let updatedLogs = [...logs];
+            let changed = false;
+            for (let i = 0; i < updatedLogs.length; i++) {
+                const log = updatedLogs[i];
+                if (!log.feedback) {
                     try {
                         const res = await fetch("/api/generate-feedback", {
                             method: "POST",
@@ -25,13 +27,18 @@ export default function JournalPage() {
                             body: JSON.stringify({ log: log.log, skill: log.skill, taskName: log.taskName })
                         });
                         const data = await res.json();
-                        newFeedbacks[log.id] = data.feedback || "No feedback generated.";
+                        updatedLogs[i] = { ...log, feedback: data.feedback || "No feedback generated." };
+                        changed = true;
                     } catch (e) {
-                        newFeedbacks[log.id] = "Error generating feedback.";
+                        updatedLogs[i] = { ...log, feedback: "Error generating feedback." };
+                        changed = true;
                     }
                 }
             }
-            setFeedbacks(newFeedbacks);
+            if (changed) {
+                setLogs(updatedLogs);
+                localStorage.setItem("progressLogs", JSON.stringify(updatedLogs));
+            }
         };
         if (logs.length > 0) fetchFeedbacks();
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -69,7 +76,7 @@ export default function JournalPage() {
                                     <div style={{ whiteSpace: "pre-wrap", fontSize: 16 }}>{log.log}</div>
                                     <div style={{ marginTop: 16, background: "#f0f7ff", borderRadius: 6, padding: 12, fontSize: 15, color: "#1a4a7a" }}>
                                         <b>AI Feedback & Advice:</b><br />
-                                        {feedbacks[log.id] || "Generating feedback..."}
+                                        {log.feedback || "Generating feedback..."}
                                     </div>
                                 </div>
                             ))}
