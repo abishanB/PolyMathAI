@@ -2,12 +2,13 @@
 import "./skillPriority.css";
 import { useState } from "react";
 
-export default function SkillPriority() {
-  const [priorities, setPriorities] = useState({
-    electronics: 5,
-    gardening: 5,
-  });
-
+export default function SkillPriority({skills, setSkillPriority, setStep}) {
+  const [priorities, setPriorities] = useState(//set each skills initally to 5/10
+  skills.reduce((acc, skill) => {
+    acc[skill] = 5
+    return acc
+  }, {})
+)
   const updatePriority = (skill, value) => {
     setPriorities((prev) => ({
       ...prev,
@@ -20,10 +21,9 @@ export default function SkillPriority() {
     // Add navigation logic here
   };
 
-  const nextStep = () => {
-    console.log("Going to step 3");
-    console.log("Current priorities:", priorities);
-    // Add navigation logic here
+  const handleNextStep = () => {
+    setSkillPriority(priorities)
+    setStep("preferences")
   };
 
   const getSliderBackground = (value) => {
@@ -67,12 +67,12 @@ export default function SkillPriority() {
 
               <form className="priorities-form">
                 <div className="priorities-list">
-                  {/* Electronics Priority */}
-                  <div className="priority-item">
+                  {skills.map((item, index) => (
+                    <div key={index} className="priority-item">
                     <div className="priority-header">
-                      <span className="skill-name">Electronics</span>
+                      <span className="skill-name">{item}</span>
                       <span className="priority-value">
-                        Priority: {priorities.electronics}/10
+                        Priority: {priorities[item]}/10
                       </span>
                     </div>
                     <div className="slider-container">
@@ -80,44 +80,20 @@ export default function SkillPriority() {
                         type="range"
                         min="1"
                         max="10"
-                        value={priorities.electronics}
+                        value={priorities[item]}
                         className="priority-slider"
                         style={{
                           background: getSliderBackground(
-                            priorities.electronics
+                            priorities[item]
                           ),
                         }}
                         onChange={(e) =>
-                          updatePriority("electronics", e.target.value)
+                          updatePriority(item, e.target.value)
                         }
                       />
                     </div>
                   </div>
-
-                  {/* Gardening Priority */}
-                  <div className="priority-item">
-                    <div className="priority-header">
-                      <span className="skill-name">Gardening</span>
-                      <span className="priority-value">
-                        Priority: {priorities.gardening}/10
-                      </span>
-                    </div>
-                    <div className="slider-container">
-                      <input
-                        type="range"
-                        min="1"
-                        max="10"
-                        value={priorities.gardening}
-                        className="priority-slider"
-                        style={{
-                          background: getSliderBackground(priorities.gardening),
-                        }}
-                        onChange={(e) =>
-                          updatePriority("gardening", e.target.value)
-                        }
-                      />
-                    </div>
-                  </div>
+                  ))}
                 </div>
 
                 <div className="navigation">
@@ -130,7 +106,7 @@ export default function SkillPriority() {
                   <button
                     type="button"
                     className="btn btn-primary"
-                    onClick={nextStep}>
+                    onClick={handleNextStep}>
                     Next Step
                   </button>
                 </div>

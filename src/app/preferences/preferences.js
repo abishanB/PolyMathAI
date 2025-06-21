@@ -2,7 +2,8 @@
 
 import { useState } from "react"
 import "./preferences.css"
-export default function SchedulePreferences() {
+//users pick their preffered times for their schedule.
+export default function SchedulePreferences({setPreferences, setStep}) {
   const [dailyHours, setDailyHours] = useState(2)
   const [selectedTimes, setSelectedTimes] = useState([])
 
@@ -43,12 +44,12 @@ export default function SchedulePreferences() {
     // Add navigation logic here
   }
 
-  const createSchedule = () => {
-    console.log("Creating schedule with preferences:", {
-      dailyHours,
-      selectedTimes,
+  const handleNextStep = () => {
+    setPreferences({
+      dailyHours: dailyHours,
+      selectedTimes: selectedTimes
     })
-    // Add schedule creation logic here
+    setStep("createSchedule")
   }
 
   return (
@@ -132,7 +133,7 @@ export default function SchedulePreferences() {
                   <button type="button" className="btn btn-back" onClick={goBack}>
                     Back
                   </button>
-                  <button type="button" className="btn btn-primary" onClick={createSchedule}>
+                  <button type="button" className="btn btn-primary" onClick={handleNextStep}>
                     Create My Schedule
                   </button>
                 </div>

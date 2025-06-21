@@ -14,7 +14,7 @@ export default function SkillSelect({setSkills, setStep}) {
   };
 
   const handleNextStep = () => {
-    set
+    setStep("skillPriority")
   }
   return (
     <div>
@@ -533,7 +533,7 @@ export default function SkillSelect({setSkills, setStep}) {
                   </div>
                 </div>
                 <div className="navigation">
-                  <button type="button" className="btn btn-primary">
+                  <button onClick={handleNextStep} type="button" className="btn btn-primary">
                     Next Step
                   </button>
                 </div>
