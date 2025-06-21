@@ -1,10 +1,11 @@
 "use client"
 import "./globals.css"
 import { useRouter } from 'next/navigation'
+import Link from 'next/link';
 export default function Home() {
   const router = useRouter()
   const handleClick = () => {
-     router.push('/onboarding')
+    router.push('/onboarding')
   }
   return (
     <div>
@@ -22,6 +23,7 @@ export default function Home() {
               <a href="#" class="btn btn-primary">
                 Get Started
               </a>
+              <Link href="/feed" className="btn btn-outline">Feed</Link>
             </div>
           </div>
         </div>
