@@ -57,13 +57,13 @@ export default function SkillSelect({setSkills, setStep}) {
               <form class="categories-grid">
                 <div class="category">
                   <div class="category-header">
-                    <span class="category-icon">🎵</span>
+                    <span class="category-icon"></span>
                     Music
                   </div>
                   
                   <div class="skills-grid">
                     {musicSkills.map((skill, index) =>(
-                     <label class="skill-item">
+                     <label key={index} class="skill-item">
                       <input
                         type="checkbox"
                         class="skill-checkbox"
@@ -79,12 +79,12 @@ export default function SkillSelect({setSkills, setStep}) {
 
                 <div class="category">
                   <div class="category-header">
-                    <span class="category-icon">💻</span>
+                    <span class="category-icon"></span>
                     Programming
                   </div>
                   <div class="skills-grid">
                     {programmingSkills.map((skill, index) =>(
-                     <label class="skill-item">
+                     <label key={index} class="skill-item">
                       <input
                         type="checkbox"
                         class="skill-checkbox"
@@ -105,7 +105,7 @@ export default function SkillSelect({setSkills, setStep}) {
                   </div>
                   <div class="skills-grid">
                     {languageSkills.map((skill, index) =>(
-                     <label class="skill-item">
+                     <label key={index} class="skill-item">
                       <input
                         type="checkbox"
                         class="skill-checkbox"
@@ -121,12 +121,12 @@ export default function SkillSelect({setSkills, setStep}) {
 
                 <div class="category">
                   <div class="category-header">
-                    <span class="category-icon">🎨</span>
+                    <span class="category-icon"></span>
                     Arts & Design
                   </div>
                   <div class="skills-grid">
                     {artsDesignSkills.map((skill, index) =>(
-                     <label class="skill-item">
+                     <label key={index} class="skill-item">
                       <input
                         type="checkbox"
                         class="skill-checkbox"
@@ -142,12 +142,12 @@ export default function SkillSelect({setSkills, setStep}) {
 
                 <div class="category">
                   <div class="category-header">
-                    <span class="category-icon">📚</span>
+                    <span class="category-icon"></span>
                     Academic
                   </div>
                   <div class="skills-grid">
                     {academicSkills.map((skill, index) =>(
-                     <label class="skill-item">
+                     <label key={index} class="skill-item">
                       <input
                         type="checkbox"
                         class="skill-checkbox"
@@ -163,12 +163,12 @@ export default function SkillSelect({setSkills, setStep}) {
 
                 <div class="category">
                   <div class="category-header">
-                    <span class="category-icon">💪</span>
+                    <span class="category-icon"></span>
                     Fitness & Health
                   </div>
                   <div class="skills-grid">
                     {fitnessHealthSkills.map((skill, index) =>(
-                     <label class="skill-item">
+                     <label key={index} class="skill-item">
                       <input
                         type="checkbox"
                         class="skill-checkbox"
