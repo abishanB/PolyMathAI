@@ -34,8 +34,20 @@ function Modal({ open, onClose, log, onFeedback }) {
     if (!open || !log) return null;
     return (
         <div style={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh", background: "rgba(0,0,0,0.3)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <div style={{ background: "#fff", borderRadius: 10, padding: 32, maxWidth: 500, width: "90%", boxShadow: "0 4px 24px #0002", position: "relative" }}>
-                <button onClick={onClose} style={{ position: "absolute", top: 12, right: 16, fontSize: 22, background: "none", border: "none", cursor: "pointer" }}>&times;</button>
+            <div style={{
+                background: "#fff",
+                borderRadius: 10,
+                padding: 32,
+                maxWidth: 500,
+                width: "90%",
+                boxShadow: "0 4px 24px #0002",
+                position: "relative",
+                maxHeight: "90vh",
+                overflowY: "auto"
+            }}>
+                <button onClick={onClose} aria-label="Close modal" style={{ position: "absolute", top: 12, right: 16, fontSize: 28, background: "none", border: "none", cursor: "pointer", zIndex: 2, color: '#888', fontWeight: 700, lineHeight: 1 }}>
+                    <span aria-hidden="true">×</span>
+                </button>
                 <div style={{ fontWeight: 600, fontSize: 20, marginBottom: 8 }}>{log.taskName} <span style={{ color: '#888', fontWeight: 400 }}>({log.skill})</span></div>
                 <div style={{ color: "#666", fontSize: 14, marginBottom: 8 }}>{new Date(log.timestamp).toLocaleString()}</div>
                 <div style={{ whiteSpace: "pre-wrap", fontSize: 16, marginBottom: 18 }}>{log.log}</div>
