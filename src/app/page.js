@@ -13,17 +13,45 @@ export default function Home() {
   const [showAuth, setShowAuth] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       setSession(session);
+      
+      // If user is already logged in, check onboarding status
+      if (session) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('onboarding_completed')
+          .eq('id', session.user.id)
+          .single();
+        
+        if (!profile?.onboarding_completed) {
+          router.push("/onboarding");
+        } else {
+          router.push("/dashboard");
+        }
+      }
     });
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
       setSession(session);
       if (session) {
         setShowAuth(false);
-        router.push("/dashboard");
+        
+        // Check if user has completed onboarding
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('onboarding_completed')
+          .eq('id', session.user.id)
+          .single();
+        
+        // If new signup or onboarding not completed, go to onboarding
+        if (event === 'SIGNED_UP' || !profile?.onboarding_completed) {
+          router.push("/onboarding");
+        } else {
+          router.push("/dashboard");
+        }
       }
     });
 

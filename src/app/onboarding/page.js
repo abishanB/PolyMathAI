@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { supabase } from "../../lib/supabase";
 import SkillSelect from "../skillSelect/skillSelect.js";
 import SkillPriority from "../skillPriority/skillPriority.js";
 import SchedulePreferences from "../preferences/preferences.js";
@@ -48,6 +49,20 @@ export default function Onboarding() {
       }
     } catch (error) {
       console.error("Failed to generate schedule with Gemini AI:", error);
+    }
+    
+    // Mark onboarding as completed in database
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        await supabase
+          .from('profiles')
+          .update({ onboarding_completed: true })
+          .eq('id', user.id);
+        console.log("Onboarding marked as completed");
+      }
+    } catch (error) {
+      console.error("Failed to update onboarding status:", error);
     }
     
     setIsGeneratingSchedule(false);
