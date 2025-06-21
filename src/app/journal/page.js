@@ -20,6 +20,16 @@ export default function JournalPage() {
                 <p style={{ marginBottom: 32 }}>
                     Here are your progress logs for completed tasks. Keep up the great work!
                 </p>
+                <button
+                    className="btn btn-danger"
+                    style={{ marginBottom: 24 }}
+                    onClick={() => {
+                        localStorage.removeItem("progressLogs");
+                        setLogs([]);
+                    }}
+                >
+                    Clear Logs (Testing Use)
+                </button>
                 {logs.length === 0 ? (
                     <div style={{ color: "#888" }}>No progress logs yet.</div>
                 ) : (

@@ -312,3 +312,35 @@ header {
     font-size: 2rem;
   }
 }
+
+/* Auth Container Styles */
+.auth-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f8f7ff 0%, #f0efff 100%);
+  padding: 2rem;
+}
+
+.auth-wrapper {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.auth-wrapper h2 {
+  color: #1f2937;
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.auth-wrapper button {
+  margin-top: 1rem;
+  width: 100%;
+}

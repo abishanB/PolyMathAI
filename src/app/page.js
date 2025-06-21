@@ -1,67 +1,105 @@
-"use client";
-import "./globals.css";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import Image from "next/image";
-
+"use client"
+import "./globals.css"
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import { useState, useEffect } from 'react'
+import { supabase } from '../lib/supabase'
+import { Auth } from '@supabase/auth-ui-react'
+import { ThemeSupa } from '@supabase/auth-ui-shared'
 export default function Home() {
-  const router = useRouter();
+  const router = useRouter()
+  const [session, setSession] = useState(null)
+  const [showAuth, setShowAuth] = useState(false)
+  
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session)
+    })
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session)
+      if (session) {
+        setShowAuth(false)
+        router.push('/dashboard')
+      }
+    })
+
+    return () => subscription.unsubscribe()
+  }, [router])
+  
   const handleClick = () => {
-    router.push("/onboarding");
-  };
+    router.push('/onboarding')
+  }
+  
+  const handleSignIn = () => {
+    setShowAuth(true)
+  }
+  if (showAuth) {
+    return (
+      <div className="auth-container">
+        <div className="auth-wrapper">
+          <h2>Welcome to PolymathAI</h2>
+          <Auth 
+            supabaseClient={supabase} 
+            appearance={{ theme: ThemeSupa }}
+            providers={['google', 'github']}
+          />
+          <button onClick={() => setShowAuth(false)} className="btn btn-outline">
+            Back to Home
+          </button>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div>
       <header>
-        <div class="container">
-          <div class="header-content">
-            <a href="#" class="logo">
-              <div className="nav-brand">
-                <Image
-                  src="/images/logo.png"
-                  alt="Logo"
-                  width={40}
-                  height={40}
-                />
-                <h1 className="nav-title">PolymathAI</h1>
-              </div>
+        <div className="container">
+          <div className="header-content">
+            <a href="#" className="logo">
+              <div className="logo-icon">P</div>
+              PolymathAI
             </a>
-            <div class="nav-buttons">
-              <a href="#" class="btn btn-outline">
+            <div className="nav-buttons">
+              <button onClick={handleSignIn} className="btn btn-outline">
                 Sign In
-              </a>
-              <a href="#" class="btn btn-primary">
+              </button>
+              <button onClick={handleClick} className="btn btn-primary">
                 Get Started
-              </a>
+              </button>
             </div>
           </div>
         </div>
       </header>
 
       <main>
-        <section class="hero">
-          <div class="container">
+        <section className="hero">
+          <div className="container">
             <h1>
               Master Every Skill with{" "}
-              <span class="highlight">AI Scheduling</span>
+              <span className="highlight">AI Scheduling</span>
             </h1>
             <p>
               The intelligent learning platform for polymaths. Let AI optimize
               your schedule to help you learn guitar, coding, languages, and any
               skill you want to master - all in perfect balance.
             </p>
-            <div class="cta-buttons">
-              <a onClick={handleClick} class="btn btn-cta btn-primary">
+            <div className="cta-buttons">
+              <button onClick={handleClick} className="btn btn-cta btn-primary">
                 Start Learning Today
-              </a>
-              <a href="#" class="btn btn-cta btn-secondary">
+              </button>
+              <a href="#" className="btn btn-cta btn-secondary">
                 Watch Demo
               </a>
             </div>
           </div>
         </section>
 
-        <section class="secondary-section">
-          <div class="container">
+        <section className="secondary-section">
+          <div className="container">
             <h2>AI-Powered Learning for Polymaths</h2>
             <p>
               Stop juggling multiple learning goals. Let our AI create the
@@ -72,7 +110,7 @@ export default function Home() {
         </section>
       </main>
 
-      <div class="floating-icon">N</div>
+      <div className="floating-icon">N</div>
     </div>
   );
 }
