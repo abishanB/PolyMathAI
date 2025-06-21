@@ -1,57 +1,45 @@
 "use client";
 import "./skillSelect.css";
 import Image from "next/image";
-export default function SkillSelect({ setSkills, setStep }) {
-  const toggleSkill = (skill) => {
-    setSkills(
-      (prev) =>
-        prev.includes(skill)
-          ? prev.filter((s) => s !== skill) // remove if already selected
-          : [...prev, skill] // add if not selected
-    );
+import { useState } from "react";
+export default function SkillSelect({passSkillsToParent, setStep }) {
+  const capitalizeFirstLetter = (skill) => skill.charAt(0).toUpperCase() + skill.slice(1);
+
+  const [skills, setSkills] = useState([
+    "Python (Suggestion)",
+    "Piano (Suggestion)",
+  ]);
+  const [searchTerm, setSearchTerm] = useState(""); //current skill being typed
+  const [maxSkillsMessage, setMaxSkillsMessage] = useState("");
+  const removeSkill = (skillToRemove) => {
+    setSkills(skills.filter((skill) => skill !== skillToRemove));
   };
-  const musicSkills = ["Guitar", "Drums", "Piano", "Violin"];
-  const programmingSkills = [
-    "Python",
-    "Machine Learning",
-    "JavaScript",
-    "Web Development",
-    "React",
-    "Mobile Development",
-  ];
-  const languageSkills = [
-    "Spanish",
-    "Japanese",
-    "French",
-    "Mandarin",
-    "German",
-    "Italian",
-  ];
-  const artsDesignSkills = [
-    "Drawing",
-    "Photography",
-    "Painting",
-    "Graphic Design",
-    "Digital Art",
-    "UI/UX Design",
-  ];
-  const fitnessHealthSkills = [
-    "Yoga",
-    "Martial Arts",
-    "Weight Training",
-    "Dance",
-    "Running",
-    "Meditation",
-  ];
-  const academicSkills = [
-    "Mathematics",
-    "History",
-    "Physics",
-    "Philosophy",
-    "Chemistry",
-    "Literature",
-  ];
+  const handleEnter = (e) => {
+    //when user types a skill then enter
+    if (e.key === "Enter") {
+      if (searchTerm == "") {
+        return;
+      }
+      if (skills.length >= 5) {
+        setMaxSkillsMessage("Maximum 5 Skills");
+        return;
+      } else {
+        setMaxSkillsMessage("");
+      }
+
+      setSkills(
+        (prev) =>
+          prev.includes(searchTerm)
+            ? prev.filter((s) => s !== searchTerm) // remove if already selected
+            : [...prev, searchTerm] // add if not selected
+      );
+      setSearchTerm("");
+    }
+  };
+
+
   const handleNextStep = () => {
+    passSkillsToParent(skills);
     setStep("skillPriority");
   };
   return (
@@ -79,157 +67,61 @@ export default function SkillSelect({ setSkills, setStep }) {
           </div>
         </section>
 
-        <section className="form-section">
-          <div className="container">
-            <div className="form-card">
-              <h1 className="form-title">What do you want to learn?</h1>
-              <p className="form-subtitle">
-                Select all the skills you're interested in mastering. Don't
-                worry, you can always add more later!
-              </p>
+        <div className="skills-container">
+          <h2 className="skills-title">What do you want to learn?</h2>
+          <p className="skills-subtitle">
+            Type to Add Skills. Don't Worry! You can always add more later. Max
+            5
+          </p>
 
-              <form className="categories-grid">
-                <div className="category">
-                  <div className="category-header">
-                    <span className="category-icon"></span>
-                    Music
+          <div className="skills-box">
+            <div className="skills-header">
+              <div className="skills-tags">
+                {skills.map((skill, index) => (
+                  <div key={index} className="skill-tag">
+                    <button
+                      className="remove-btn"
+                      onClick={() => removeSkill(skill)}
+                      aria-label={`Remove ${skill}`}>
+                      x
+                    </button>
+                    <span className="skill-text">{skill}</span>
                   </div>
+                ))}
+              </div>
+            </div>
 
-                  <div className="skills-grid">
-                    {musicSkills.map((skill, index) => (
-                      <label key={index} className="skill-item">
-                        <input
-                          type="checkbox"
-                          className="skill-checkbox"
-                          name="skills"
-                          value={skill}
-                          onChange={(e) => toggleSkill(e.target.value)}
-                        />
-                        <span className="skill-label">{skill}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
+            <div className="search-section">
+              <input
+                type="text"
+                className="search-input"
+                placeholder="Search"
+                value={searchTerm}
+                onChange={(e) =>
+                  setSearchTerm(capitalizeFirstLetter(e.target.value))
+                }
+                onKeyDown={handleEnter}
+              />
 
-                <div className="category">
-                  <div className="category-header">
-                    <span className="category-icon"></span>
-                    Programming
-                  </div>
-                  <div className="skills-grid">
-                    {programmingSkills.map((skill, index) => (
-                      <label key={index} className="skill-item">
-                        <input
-                          type="checkbox"
-                          className="skill-checkbox"
-                          name="skills"
-                          value={skill}
-                          onChange={(e) => toggleSkill(e.target.value)}
-                        />
-                        <span className="skill-label">{skill}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="category">
-                  <div className="category-header">
-                    <span className="category-icon"></span>
-                    Languages
-                  </div>
-                  <div className="skills-grid">
-                    {languageSkills.map((skill, index) => (
-                      <label key={index} className="skill-item">
-                        <input
-                          type="checkbox"
-                          className="skill-checkbox"
-                          name="skills"
-                          value={skill}
-                          onChange={(e) => toggleSkill(e.target.value)}
-                        />
-                        <span className="skill-label">{skill}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="category">
-                  <div className="category-header">
-                    <span className="category-icon"></span>
-                    Arts & Design
-                  </div>
-                  <div className="skills-grid">
-                    {artsDesignSkills.map((skill, index) => (
-                      <label key={index} className="skill-item">
-                        <input
-                          type="checkbox"
-                          className="skill-checkbox"
-                          name="skills"
-                          value={skill}
-                          onChange={(e) => toggleSkill(e.target.value)}
-                        />
-                        <span className="skill-label">{skill}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="category">
-                  <div className="category-header">
-                    <span className="category-icon"></span>
-                    Academic
-                  </div>
-                  <div className="skills-grid">
-                    {academicSkills.map((skill, index) => (
-                      <label key={index} className="skill-item">
-                        <input
-                          type="checkbox"
-                          className="skill-checkbox"
-                          name="skills"
-                          value={skill}
-                          onChange={(e) => toggleSkill(e.target.value)}
-                        />
-                        <span className="skill-label">{skill}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="category">
-                  <div className="category-header">
-                    <span className="category-icon"></span>
-                    Fitness & Health
-                  </div>
-                  <div className="skills-grid">
-                    {fitnessHealthSkills.map((skill, index) => (
-                      <label key={index} className="skill-item">
-                        <input
-                          type="checkbox"
-                          className="skill-checkbox"
-                          name="skills"
-                          value={skill}
-                          onChange={(e) => toggleSkill(e.target.value)}
-                        />
-                        <span className="skill-label">{skill}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="navigation">
-                  <button style={{ visibility: "hidden" }}></button>
+              <div className="no-items">{maxSkillsMessage}</div>
+            </div>
+          </div>
+           <div className="navigation">
                   <button
-                    onClick={handleNextStep}
+                    style={{visibility: "hidden"}}
+                    >
+                   
+                  </button>
+                  <button
                     type="button"
-                    className="btn btn-primary">
+                    className="btn btn-primary"
+                    onClick={handleNextStep}>
                     Next Step
                   </button>
                 </div>
-              </form>
-            </div>
-          </div>
-        </section>
+        </div>
       </div>
+      
     </div>
   );
 }

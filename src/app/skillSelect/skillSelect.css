@@ -187,7 +187,6 @@ header {
   user-select: none;
 }
 
-
 /* Responsive Design */
 @media (max-width: 768px) {
   .header-content {
@@ -226,5 +225,156 @@ header {
 
   .category-header {
     font-size: 1rem;
+  }
+}
+
+.skills-container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.skills-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 8px 0;
+}
+
+.skills-subtitle {
+  font-size: 1rem;
+  color: #666;
+  margin: 0 0 16px 0;
+  font-weight: 400;
+}
+
+.skills-box {
+  border: 3px solid #22c55e;
+  border-radius: 12px;
+  padding: 20px;
+  background: white;
+}
+
+.skills-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.skills-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  flex: 1;
+  margin-right: 16px;
+}
+
+.skill-tag {
+  display: flex;
+  align-items: center;
+  background: #e5e7eb;
+  border-radius: 20px;
+  padding: 6px 12px;
+  font-size: 14px;
+  color: #374151;
+  gap: 8px;
+}
+
+.remove-btn {
+  background: none;
+  border: none;
+  color: #6b7280;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 0;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.remove-btn:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.skill-text {
+  white-space: nowrap;
+}
+
+.menu-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.line {
+  width: 18px;
+  height: 2px;
+  background-color: #22c55e;
+  border-radius: 1px;
+}
+
+.search-section {
+  border-top: 1px solid #e5e7eb;
+  padding-top: 16px;
+}
+
+.search-input {
+  width: 100%;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  color: #374151;
+  background: transparent;
+  padding: 8px 0;
+}
+
+.search-input::placeholder {
+  color: #9ca3af;
+}
+
+.no-items {
+  color: #6b7280;
+  font-size: 14px;
+  margin-top: 12px;
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+  .skills-container {
+    margin: 20px;
+    padding: 16px;
+  }
+
+  .skills-title {
+    font-size: 1.5rem;
+  }
+
+  .skills-box {
+    padding: 16px;
+  }
+
+  .skills-header {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .skills-tags {
+    margin-right: 0;
   }
 }

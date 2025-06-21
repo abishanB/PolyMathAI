@@ -75,7 +75,7 @@ export default function Onboarding() {
   }
 
   if (step === "skillSelect") {
-    return <SkillSelect setSkills={setSkills} setStep={setStep} />;
+    return <SkillSelect passSkillsToParent={setSkills} setStep={setStep} />;
   }
   
   if (step === "skillPriority") {
