@@ -22,7 +22,7 @@ export default function DashboardPage() {
     if (profile) {
       const parsedProfile = JSON.parse(profile);
       setUserProfile(parsedProfile);
-      
+
       // Check if we have a Gemini-generated schedule first
       const geminiSchedule = localStorage.getItem("generatedSchedule");
       if (geminiSchedule) {
@@ -37,7 +37,7 @@ export default function DashboardPage() {
     if (completed) {
       setCompletedTasks(JSON.parse(completed));
     }
-    
+
     setIsLoading(false);
   }, []);
 
@@ -161,6 +161,9 @@ export default function DashboardPage() {
                 <button className="nav-btn">Calendar</button>
               </Link>
               <button className="nav-btn">Settings</button>
+              <Link href="/feed">
+                <button className="nav-btn">Feed</button>
+              </Link>
             </div>
           </div>
         </div>
@@ -300,8 +303,8 @@ export default function DashboardPage() {
                       <span>{Math.round(completionRate)}%</span>
                     </div>
                     <div className="progress-bar">
-                      <div 
-                        className="progress-fill" 
+                      <div
+                        className="progress-fill"
                         style={{ width: `${completionRate}%` }}
                       ></div>
                     </div>
@@ -322,8 +325,8 @@ export default function DashboardPage() {
                             <span>{Math.round(skillProgress)}%</span>
                           </div>
                           <div className="skill-progress-bar">
-                            <div 
-                              className="skill-progress-fill" 
+                            <div
+                              className="skill-progress-fill"
                               style={{ width: `${skillProgress}%` }}
                             ></div>
                           </div>
