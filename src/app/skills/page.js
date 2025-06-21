@@ -31,6 +31,10 @@ export default function SkillsPage() {
   const [modalSkill, setModalSkill] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalLoading, setModalLoading] = useState(false);
+  const [addSkillModalOpen, setAddSkillModalOpen] = useState(false);
+  const [newSkills, setNewSkills] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [skillDropdown, setSkillDropdown] = useState(null);
 
   useEffect(() => {
     const profile = localStorage.getItem("polymathProfile");
@@ -40,6 +44,20 @@ export default function SkillsPage() {
       generateSkillsProgress(parsedProfile);
     }
   }, []);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (skillDropdown && !event.target.closest('.skill-settings-container')) {
+        setSkillDropdown(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [skillDropdown]);
 
   const generateSkillsProgress = (profile) => {
     const progress = profile.skills.map((skill) => ({
@@ -64,6 +82,57 @@ export default function SkillsPage() {
     };
     setUserProfile(updatedProfile);
     localStorage.setItem("polymathProfile", JSON.stringify(updatedProfile));
+  };
+
+  const addSkills = () => {
+    if (newSkills.length === 0) return;
+    
+    const updatedProfile = {
+      ...userProfile,
+      skills: [...userProfile.skills, ...newSkills],
+    };
+    
+    setUserProfile(updatedProfile);
+    localStorage.setItem("polymathProfile", JSON.stringify(updatedProfile));
+    generateSkillsProgress(updatedProfile);
+    
+    // Reset modal state
+    setNewSkills([]);
+    setSearchTerm("");
+    setAddSkillModalOpen(false);
+  };
+
+  const removeSkill = (skillToRemove) => {
+    const updatedProfile = {
+      ...userProfile,
+      skills: userProfile.skills.filter(skill => skill !== skillToRemove),
+      priorities: Object.fromEntries(
+        Object.entries(userProfile.priorities || {}).filter(([key]) => key !== skillToRemove)
+      ),
+    };
+    
+    setUserProfile(updatedProfile);
+    localStorage.setItem("polymathProfile", JSON.stringify(updatedProfile));
+    generateSkillsProgress(updatedProfile);
+    setSkillDropdown(null);
+  };
+
+  const capitalizeFirstLetter = (skill) => skill.charAt(0).toUpperCase() + skill.slice(1);
+
+  const handleAddSkillInput = (e) => {
+    if (e.key === "Enter" && searchTerm.trim()) {
+      if (newSkills.length >= 5) return;
+      
+      const skill = capitalizeFirstLetter(searchTerm.trim());
+      if (!newSkills.includes(skill) && !userProfile.skills.includes(skill)) {
+        setNewSkills([...newSkills, skill]);
+      }
+      setSearchTerm("");
+    }
+  };
+
+  const removeNewSkill = (skillToRemove) => {
+    setNewSkills(newSkills.filter(skill => skill !== skillToRemove));
   };
 
   const getSkillColor = (skill) => {
@@ -158,7 +227,7 @@ export default function SkillsPage() {
             <h1 className="skills-title">Your Skills</h1>
             <p className="skills-subtitle">Manage your learning priorities and track progress</p>
           </div>
-          <button className="skills-add-btn">
+          <button className="skills-add-btn" onClick={() => setAddSkillModalOpen(true)}>
             <span className="skills-add-icon">+</span>
             Add Skill
           </button>
@@ -230,9 +299,25 @@ export default function SkillsPage() {
                     <span className={`skill-badge ${getSkillColor(skillData.skill)}`}>{skillData.skill}</span>
                     <span className={`level-badge ${levelBadge.color}`}>{levelBadge.label}</span>
                   </div>
-                  <button className="skill-settings-btn">
-                    <span className="skill-settings-icon">⚙️</span>
-                  </button>
+                  <div className="skill-settings-container">
+                    <button 
+                      className="skill-settings-btn"
+                      onClick={() => setSkillDropdown(skillDropdown === skillData.skill ? null : skillData.skill)}
+                    >
+                      <span className="skill-settings-icon">⚙️</span>
+                    </button>
+                    {skillDropdown === skillData.skill && (
+                      <div className="skill-dropdown">
+                        <button 
+                          className="skill-dropdown-item skill-delete"
+                          onClick={() => removeSkill(skillData.skill)}
+                        >
+                          <span className="skill-dropdown-icon">🗑️</span>
+                          Delete Skill
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <div className="skill-card-content">
                   {/* Progress Bar */}
@@ -302,13 +387,90 @@ export default function SkillsPage() {
           feedback={modalSkill ? feedbacks[modalSkill] : ""}
           loading={modalLoading}
         />
+        
+        {/* Add Skills Modal */}
+        {addSkillModalOpen && (
+          <div className="modal-overlay">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h3 className="modal-title">Add New Skills</h3>
+                <button 
+                  className="modal-close-btn"
+                  onClick={() => {
+                    setAddSkillModalOpen(false);
+                    setNewSkills([]);
+                    setSearchTerm("");
+                  }}
+                >
+                  ×
+                </button>
+              </div>
+              
+              <div className="modal-body">
+                <p className="modal-subtitle">Type to add skills. Press Enter to add each skill. Maximum 5 skills at once.</p>
+                
+                <div className="add-skills-box">
+                  <div className="add-skills-tags">
+                    {newSkills.map((skill, index) => (
+                      <div key={index} className="skill-tag">
+                        <button
+                          className="remove-btn"
+                          onClick={() => removeNewSkill(skill)}
+                          aria-label={`Remove ${skill}`}
+                        >
+                          ×
+                        </button>
+                        <span className="skill-text">{skill}</span>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  <div className="add-skills-input-section">
+                    <input
+                      type="text"
+                      className="add-skills-input"
+                      placeholder="Type skill name and press Enter"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      onKeyDown={handleAddSkillInput}
+                      disabled={newSkills.length >= 5}
+                    />
+                    {newSkills.length >= 5 && (
+                      <div className="max-skills-message">Maximum 5 skills reached</div>
+                    )}
+                  </div>
+                </div>
+              </div>
+              
+              <div className="modal-footer">
+                <button 
+                  className="btn btn-secondary"
+                  onClick={() => {
+                    setAddSkillModalOpen(false);
+                    setNewSkills([]);
+                    setSearchTerm("");
+                  }}
+                >
+                  Cancel
+                </button>
+                <button 
+                  className="btn btn-primary"
+                  onClick={addSkills}
+                  disabled={newSkills.length === 0}
+                >
+                  Add {newSkills.length} Skill{newSkills.length !== 1 ? 's' : ''}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
         {/* Add More Skills CTA */}
         <div className="add-skills-cta">
           <div className="add-skills-content">
             <div className="add-skills-icon">+</div>
             <h3 className="add-skills-title">Add More Skills</h3>
             <p className="add-skills-description">Expand your polymath journey by adding new skills to master</p>
-            <button className="add-skills-btn">Browse Skills</button>
+            <button className="add-skills-btn" onClick={() => setAddSkillModalOpen(true)}>Browse Skills</button>
           </div>
         </div>
       </div>

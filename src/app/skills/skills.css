@@ -612,6 +612,238 @@
   box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
 }
 
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.modal-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+}
+
+.modal-close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.modal-close-btn:hover {
+  background-color: #f3f4f6;
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+.modal-subtitle {
+  color: #6b7280;
+  margin: 0 0 1rem 0;
+  font-size: 0.875rem;
+}
+
+.add-skills-box {
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 1rem;
+  background: #f9fafb;
+}
+
+.add-skills-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  min-height: 2rem;
+}
+
+.skill-tag {
+  display: flex;
+  align-items: center;
+  background: #e5e7eb;
+  border-radius: 16px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.875rem;
+  color: #374151;
+  gap: 0.5rem;
+}
+
+.remove-btn {
+  background: none;
+  border: none;
+  color: #6b7280;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0;
+  width: 1rem;
+  height: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.remove-btn:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.skill-text {
+  white-space: nowrap;
+}
+
+.add-skills-input-section {
+  border-top: 1px solid #e5e7eb;
+  padding-top: 1rem;
+}
+
+.add-skills-input {
+  width: 100%;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  color: #374151;
+  background: transparent;
+  padding: 0.5rem 0;
+}
+
+.add-skills-input::placeholder {
+  color: #9ca3af;
+}
+
+.add-skills-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.max-skills-message {
+  color: #ef4444;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.btn {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+}
+
+.btn-secondary {
+  background: white;
+  color: #374151;
+  border-color: #d1d5db;
+}
+
+.btn-secondary:hover {
+  background: #f3f4f6;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #7c3aed 0%, #9333ea 100%);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Skill Settings Dropdown */
+.skill-settings-container {
+  position: relative;
+}
+
+.skill-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  min-width: 150px;
+}
+
+.skill-dropdown-item {
+  width: 100%;
+  padding: 0.75rem;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  transition: background-color 0.2s;
+}
+
+.skill-dropdown-item:hover {
+  background-color: #f3f4f6;
+}
+
+.skill-delete {
+  color: #ef4444;
+}
+
+.skill-delete:hover {
+  background-color: #fef2f2;
+}
+
+.skill-dropdown-icon {
+  font-size: 1rem;
+}
+
 /* Mobile Responsiveness */
 @media (max-width: 767px) {
   .skills-nav-links {
@@ -640,5 +872,15 @@
   
   .skill-actions {
     flex-direction: column;
+  }
+
+  .modal-content {
+    width: 95%;
+  }
+
+  .modal-header,
+  .modal-body,
+  .modal-footer {
+    padding: 1rem;
   }
 }
