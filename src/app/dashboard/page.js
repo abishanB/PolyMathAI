@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import "./dashboard.css";
+import React from "react";
 
 const formatTo12Hour = (time24) => {
   const [hours, minutes] = time24.split(":").map(Number);
@@ -10,11 +11,47 @@ const formatTo12Hour = (time24) => {
   return `${hours12}:${minutes.toString().padStart(2, "0")} ${period}`;
 };
 
+function ProgressLogModal({ open, onClose, onSubmit, task }) {
+  const [log, setLog] = useState("");
+  if (!open) return null;
+  return (
+    <div className="modal-overlay">
+      <div className="modal">
+        <h2>Progress Log for {task?.task}</h2>
+        <textarea
+          value={log}
+          onChange={(e) => setLog(e.target.value)}
+          placeholder="Write your progress..."
+          rows={6}
+          style={{ width: "100%", marginBottom: 12 }}
+        />
+        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+          <button onClick={onClose} className="btn btn-secondary">
+            Cancel
+          </button>
+          <button
+            onClick={() => {
+              onSubmit(log);
+              setLog("");
+            }}
+            className="btn btn-primary"
+            disabled={!log.trim()}
+          >
+            Submit
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function DashboardPage() {
   const [userProfile, setUserProfile] = useState(null);
   const [todaySchedule, setTodaySchedule] = useState([]);
   const [completedTasks, setCompletedTasks] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalTask, setModalTask] = useState(null);
 
   useEffect(() => {
     // Load user profile
@@ -45,20 +82,75 @@ export default function DashboardPage() {
     // Simulate AI-generated schedule based on user preferences
     const schedule = [];
     const skillTasks = {
-      Guitar: ["Chord progressions", "Scale practice", "Song learning", "Finger exercises"],
-      Piano: ["Scales practice", "Piece rehearsal", "Sight reading", "Technique work"],
+      Guitar: [
+        "Chord progressions",
+        "Scale practice",
+        "Song learning",
+        "Finger exercises",
+      ],
+      Piano: [
+        "Scales practice",
+        "Piece rehearsal",
+        "Sight reading",
+        "Technique work",
+      ],
       Python: ["Algorithm practice", "Project coding", "Code review", "Documentation"],
-      JavaScript: ["Framework learning", "Project development", "Debugging practice", "API integration"],
-      Spanish: ["Vocabulary review", "Grammar exercises", "Conversation practice", "Listening comprehension"],
-      French: ["Pronunciation practice", "Reading comprehension", "Writing exercises", "Cultural study"],
-      Drawing: ["Figure drawing", "Still life practice", "Technique study", "Portfolio work"],
-      Photography: ["Composition practice", "Editing workflow", "Portfolio review", "Technique exploration"],
+      JavaScript: [
+        "Framework learning",
+        "Project development",
+        "Debugging practice",
+        "API integration",
+      ],
+      Spanish: [
+        "Vocabulary review",
+        "Grammar exercises",
+        "Conversation practice",
+        "Listening comprehension",
+      ],
+      French: [
+        "Pronunciation practice",
+        "Reading comprehension",
+        "Writing exercises",
+        "Cultural study",
+      ],
+      Drawing: [
+        "Figure drawing",
+        "Still life practice",
+        "Technique study",
+        "Portfolio work",
+      ],
+      Photography: [
+        "Composition practice",
+        "Editing workflow",
+        "Portfolio review",
+        "Technique exploration",
+      ],
       Music: ["Practice session", "Theory study", "Song learning", "Technique work"],
-      Programming: ["Code practice", "Project work", "Learning new concepts", "Problem solving"],
-      Languages: ["Vocabulary practice", "Grammar study", "Conversation practice", "Reading comprehension"],
-      "Arts & Design": ["Creative practice", "Skill development", "Project work", "Technique study"],
+      Programming: [
+        "Code practice",
+        "Project work",
+        "Learning new concepts",
+        "Problem solving",
+      ],
+      Languages: [
+        "Vocabulary practice",
+        "Grammar study",
+        "Conversation practice",
+        "Reading comprehension",
+      ],
+      "Arts & Design": [
+        "Creative practice",
+        "Skill development",
+        "Project work",
+        "Technique study",
+      ],
       Academic: ["Study session", "Research", "Problem solving", "Review"],
-      "Fitness & Health": ["Exercise routine", "Skill practice", "Goal tracking", "Technique work"]
+      "Fitness & Health": [
+        "Exercise routine",
+        "Skill practice",
+        "Goal tracking",
+        "Technique work",
+      ],
     };
 
     let currentTime = 17; // Start at 5 PM
@@ -108,7 +200,14 @@ export default function DashboardPage() {
   };
 
   const getSkillColor = (skill) => {
-    const colors = ["skill-purple", "skill-blue", "skill-green", "skill-yellow", "skill-pink", "skill-indigo"];
+    const colors = [
+      "skill-purple",
+      "skill-blue",
+      "skill-green",
+      "skill-yellow",
+      "skill-pink",
+      "skill-indigo",
+    ];
     return colors[skill.length % colors.length];
   };
 
@@ -143,6 +242,22 @@ export default function DashboardPage() {
     );
   }
 
+  // Save progress log to localStorage
+  const handleProgressLog = (task, log) => {
+    const logs = JSON.parse(localStorage.getItem("progressLogs") || "[]");
+    logs.push({
+      id: Date.now(),
+      taskId: task.id,
+      skill: task.skill,
+      taskName: task.task,
+      log,
+      timestamp: new Date().toISOString(),
+    });
+    localStorage.setItem("progressLogs", JSON.stringify(logs));
+    toggleTaskCompletion(task.id);
+    setModalOpen(false);
+  };
+
   return (
     <div className="dashboard">
       {/* Navigation */}
@@ -163,6 +278,9 @@ export default function DashboardPage() {
               <button className="nav-btn">Settings</button>
               <Link href="/feed">
                 <button className="nav-btn">Feed</button>
+              </Link>
+              <Link href="/journal">
+                <button className="nav-btn">Journal</button>
               </Link>
             </div>
           </div>
@@ -260,8 +378,14 @@ export default function DashboardPage() {
                     >
                       <div className="schedule-item-left">
                         <button
-                          onClick={() => toggleTaskCompletion(item.id)}
+                          onClick={() => {
+                            if (!isCompleted) {
+                              setModalTask(item);
+                              setModalOpen(true);
+                            }
+                          }}
                           className={`completion-btn ${isCompleted ? "completion-btn-completed" : "completion-btn-pending"}`}
+                          disabled={isCompleted}
                         >
                           {isCompleted ? "✅" : "▶️"}
                         </button>
@@ -386,6 +510,12 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
+      <ProgressLogModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onSubmit={(log) => handleProgressLog(modalTask, log)}
+        task={modalTask}
+      />
     </div>
   );
 }
