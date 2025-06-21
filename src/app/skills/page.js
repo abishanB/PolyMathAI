@@ -5,9 +5,32 @@ import Link from "next/link";
 import "./skills.css";
 import Navbar from '../components/Navbar';
 
+// Modal for skill feedback
+function FeedbackModal({ open, onClose, skill, feedback, loading }) {
+  if (!open) return null;
+  return (
+    <div style={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh", background: "rgba(0,0,0,0.3)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div style={{ background: "#fff", borderRadius: 10, padding: 32, maxWidth: 500, width: "90%", boxShadow: "0 4px 24px #0002", position: "relative", maxHeight: "90vh", overflowY: "auto" }}>
+        <button onClick={onClose} aria-label="Close modal" style={{ position: "absolute", top: 12, right: 16, fontSize: 28, background: "none", border: "none", cursor: "pointer", zIndex: 2, color: '#888', fontWeight: 700, lineHeight: 1 }}>
+          <span aria-hidden="true">×</span>
+        </button>
+        <div style={{ fontWeight: 600, fontSize: 20, marginBottom: 8 }}>{skill} Progress</div>
+        <div style={{ background: "#f0f7ff", borderRadius: 6, padding: 12, fontSize: 15, color: "#1a4a7a" }}>
+          <b>AI Feedback:</b><br />
+          {loading ? "Generating feedback..." : feedback}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function SkillsPage() {
   const [userProfile, setUserProfile] = useState(null);
   const [skillsProgress, setSkillsProgress] = useState([]);
+  const [feedbacks, setFeedbacks] = useState({});
+  const [modalSkill, setModalSkill] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalLoading, setModalLoading] = useState(false);
 
   useEffect(() => {
     const profile = localStorage.getItem("polymathProfile");
@@ -54,6 +77,57 @@ export default function SkillsPage() {
     if (level < 60) return { label: "Advanced", color: "level-advanced" };
     return { label: "Expert", color: "level-expert" };
   };
+
+  // Fetch feedback for all skills
+  useEffect(() => {
+    if (!userProfile) return;
+    const fetchAllFeedbacks = async () => {
+      const logs = JSON.parse(localStorage.getItem("progressLogs") || "[]");
+      const feedbackMap = {};
+      for (const skill of userProfile.skills) {
+        setModalLoading(true);
+        const res = await fetch("/api/generate-skill-feedback", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ skillId: skill })
+        });
+        const data = await res.json();
+        feedbackMap[skill] = data.feedback || "No feedback.";
+      }
+      setFeedbacks(feedbackMap);
+      setModalLoading(false);
+    };
+    fetchAllFeedbacks();
+  }, [userProfile]);
+
+  // Regenerate feedback if journal logs change
+  useEffect(() => {
+    const handleStorage = (e) => {
+      if (e.key === "progressLogs") {
+        // Re-fetch feedbacks
+        if (userProfile) {
+          const fetchAllFeedbacks = async () => {
+            const feedbackMap = {};
+            for (const skill of userProfile.skills) {
+              setModalLoading(true);
+              const res = await fetch("/api/generate-skill-feedback", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ skillId: skill })
+              });
+              const data = await res.json();
+              feedbackMap[skill] = data.feedback || "No feedback.";
+            }
+            setFeedbacks(feedbackMap);
+            setModalLoading(false);
+          };
+          fetchAllFeedbacks();
+        }
+      }
+    };
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
+  }, [userProfile]);
 
   if (!userProfile) {
     return (
@@ -211,7 +285,9 @@ export default function SkillsPage() {
 
                   {/* Action Buttons */}
                   <div className="skill-actions">
-                    <button className="skill-action-btn">View Progress</button>
+                    <button className="skill-action-btn" onClick={() => { setModalSkill(skillData.skill); setModalOpen(true); }}>
+                      View Progress
+                    </button>
                     <button className="skill-action-btn">Practice Now</button>
                   </div>
                 </div>
@@ -219,7 +295,13 @@ export default function SkillsPage() {
             );
           })}
         </div>
-
+        <FeedbackModal
+          open={modalOpen}
+          onClose={() => setModalOpen(false)}
+          skill={modalSkill}
+          feedback={modalSkill ? feedbacks[modalSkill] : ""}
+          loading={modalLoading}
+        />
         {/* Add More Skills CTA */}
         <div className="add-skills-cta">
           <div className="add-skills-content">
