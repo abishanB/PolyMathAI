@@ -2,7 +2,6 @@
 import Link from "next/link";
 import "./Navbar.css";
 import Image from "next/image";
-import logo from "./logo.png";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "../../lib/supabase";
