@@ -344,20 +344,24 @@ export default function DashboardPage() {
                 <h3>Quick Actions</h3>
               </div>
               <div className="sidebar-card-content quick-actions">
-                <button className="action-btn">
-                  <span className="action-icon">📅</span>
-                  View Full Calendar
-                </button>
+                <Link href="/calendar">
+                  <button className="action-btn">
+                    <span className="action-icon">📅</span>
+                    View Full Calendar
+                  </button>
+                </Link>
                 <Link href="/skills">
                   <button className="action-btn">
                     <span className="action-icon">🎯</span>
                     Manage Skills
                   </button>
                 </Link>
-                <button className="action-btn">
-                  <span className="action-icon">📈</span>
-                  View Analytics
-                </button>
+                <Link href="/year-review">
+                  <button className="action-btn">
+                    <span className="action-icon">📈</span>
+                    View Analytics
+                  </button>
+                </Link>
               </div>
             </div>
 
