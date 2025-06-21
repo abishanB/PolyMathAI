@@ -73,7 +73,7 @@ export default function SkillSelect({ setSkills, setStep }) {
           <div className="container">
             <div className="progress-label">Progress</div>
             <div className="progress-bar">
-              <div className="progress-fill"></div>
+              <div className="progress-fill-1"></div>
             </div>
             <div className="progress-percentage">33%</div>
           </div>

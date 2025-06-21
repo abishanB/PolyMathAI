@@ -51,7 +51,7 @@ export default function SkillPriority({ skills, setSkillPriority, setStep }) {
           <div className="container">
             <div className="progress-label">Progress</div>
             <div className="progress-bar">
-              <div className="progress-fill"></div>
+              <div className="progress-fill-2"></div>
             </div>
             <div className="progress-percentage">67%</div>
           </div>

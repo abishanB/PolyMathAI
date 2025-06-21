@@ -83,7 +83,7 @@ export default function SchedulePreferences({
           <div className="container">
             <div className="progress-label">Progress</div>
             <div className="progress-bar">
-              <div className="progress-fill"></div>
+              <div className="progress-fill-3"></div>
             </div>
             <div className="progress-percentage">100%</div>
           </div>
