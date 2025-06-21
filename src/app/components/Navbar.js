@@ -1,14 +1,13 @@
 import Link from "next/link";
 import "./Navbar.css";
 import Image from "next/image";
-import logo from "./logo.png";
 export default function Navbar() {
   return (
     <nav className="dashboard-nav">
       <div className="nav-container">
         <div className="nav-content">
           <div className="nav-brand">
-            <Image src={logo} alt="Logo" width={40} height={40} />
+            <Image src="/images/logo.png" alt="Logo" width={40} height={40} />
             <h1 className="nav-title">PolymathAI</h1>
           </div>
           <div className="nav-links">

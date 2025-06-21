@@ -1,20 +1,29 @@
-"use client"
-import "./globals.css"
-import { useRouter } from 'next/navigation'
-import Link from 'next/link';
+"use client";
+import "./globals.css";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import Image from "next/image";
+
 export default function Home() {
-  const router = useRouter()
+  const router = useRouter();
   const handleClick = () => {
-    router.push('/onboarding')
-  }
+    router.push("/onboarding");
+  };
   return (
     <div>
       <header>
         <div class="container">
           <div class="header-content">
             <a href="#" class="logo">
-              <div class="logo-icon">P</div>
-              PolymathAI
+              <div className="nav-brand">
+                <Image
+                  src="/images/logo.png"
+                  alt="Logo"
+                  width={40}
+                  height={40}
+                />
+                <h1 className="nav-title">PolymathAI</h1>
+              </div>
             </a>
             <div class="nav-buttons">
               <a href="#" class="btn btn-outline">

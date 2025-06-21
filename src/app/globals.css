@@ -255,6 +255,14 @@ header {
   transform: scale(1.1);
 }
 
+.nav-brand {
+  font-size: 18px;
+  gap: 8px;
+  display: flex;
+  text-align: center;
+  align-items: center;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .header-content {

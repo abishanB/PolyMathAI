@@ -1,7 +1,7 @@
 "use client";
 import "./skillSelect.css";
-export default function SkillSelect({setSkills, setStep}) {
-
+import Image from "next/image";
+export default function SkillSelect({ setSkills, setStep }) {
   const toggleSkill = (skill) => {
     setSkills(
       (prev) =>
@@ -9,26 +9,60 @@ export default function SkillSelect({setSkills, setStep}) {
           ? prev.filter((s) => s !== skill) // remove if already selected
           : [...prev, skill] // add if not selected
     );
-    
   };
-  const musicSkills = ["Guitar", "Drums", "Piano", "Violin"]
-  const programmingSkills = ["Python", "Machine Learning", "JavaScript", "Web Development", "React", "Mobile Development"]
-  const languageSkills = ["Spanish", "Japanese", "French", "Mandarin", "German", "Italian"]
-  const artsDesignSkills = ["Drawing", "Photography", "Painting", "Graphic Design", "Digital Art", "UI/UX Design"]
-  const fitnessHealthSkills = ["Yoga", "Martial Arts", "Weight Training", "Dance", "Running", "Meditation"]
-  const academicSkills = ["Mathematics", "History", "Physics", "Philosophy", "Chemistry", "Literature"]
+  const musicSkills = ["Guitar", "Drums", "Piano", "Violin"];
+  const programmingSkills = [
+    "Python",
+    "Machine Learning",
+    "JavaScript",
+    "Web Development",
+    "React",
+    "Mobile Development",
+  ];
+  const languageSkills = [
+    "Spanish",
+    "Japanese",
+    "French",
+    "Mandarin",
+    "German",
+    "Italian",
+  ];
+  const artsDesignSkills = [
+    "Drawing",
+    "Photography",
+    "Painting",
+    "Graphic Design",
+    "Digital Art",
+    "UI/UX Design",
+  ];
+  const fitnessHealthSkills = [
+    "Yoga",
+    "Martial Arts",
+    "Weight Training",
+    "Dance",
+    "Running",
+    "Meditation",
+  ];
+  const academicSkills = [
+    "Mathematics",
+    "History",
+    "Physics",
+    "Philosophy",
+    "Chemistry",
+    "Literature",
+  ];
   const handleNextStep = () => {
-    setStep("skillPriority")
-  }
+    setStep("skillPriority");
+  };
   return (
     <div>
       <header>
         <div class="container">
           <div class="header-content">
-            <a href="#" class="logo">
-              <div class="logo-icon">P</div>
-              PolymathAI
-            </a>
+            <div className="nav-brand">
+              <Image src="/images/logo.png" alt="Logo" width={40} height={40} />
+              <h1 className="nav-title">PolymathAI</h1>
+            </div>
             <div class="step-indicator">Step 1 of 3</div>
           </div>
         </div>
@@ -60,20 +94,20 @@ export default function SkillSelect({setSkills, setStep}) {
                     <span class="category-icon"></span>
                     Music
                   </div>
-                  
+
                   <div class="skills-grid">
-                    {musicSkills.map((skill, index) =>(
-                     <label key={index} class="skill-item">
-                      <input
-                        type="checkbox"
-                        class="skill-checkbox"
-                        name="skills"
-                        value={skill}
-                        onChange={(e) => toggleSkill(e.target.value)}
-                      />
-                      <span class="skill-label">{skill}</span>
-                    </label>
-                  ))}
+                    {musicSkills.map((skill, index) => (
+                      <label key={index} class="skill-item">
+                        <input
+                          type="checkbox"
+                          class="skill-checkbox"
+                          name="skills"
+                          value={skill}
+                          onChange={(e) => toggleSkill(e.target.value)}
+                        />
+                        <span class="skill-label">{skill}</span>
+                      </label>
+                    ))}
                   </div>
                 </div>
 
@@ -83,18 +117,18 @@ export default function SkillSelect({setSkills, setStep}) {
                     Programming
                   </div>
                   <div class="skills-grid">
-                    {programmingSkills.map((skill, index) =>(
-                     <label key={index} class="skill-item">
-                      <input
-                        type="checkbox"
-                        class="skill-checkbox"
-                        name="skills"
-                        value={skill}
-                        onChange={(e) => toggleSkill(e.target.value)}
-                      />
-                      <span class="skill-label">{skill}</span>
-                    </label>
-                  ))}
+                    {programmingSkills.map((skill, index) => (
+                      <label key={index} class="skill-item">
+                        <input
+                          type="checkbox"
+                          class="skill-checkbox"
+                          name="skills"
+                          value={skill}
+                          onChange={(e) => toggleSkill(e.target.value)}
+                        />
+                        <span class="skill-label">{skill}</span>
+                      </label>
+                    ))}
                   </div>
                 </div>
 
@@ -104,18 +138,18 @@ export default function SkillSelect({setSkills, setStep}) {
                     Languages
                   </div>
                   <div class="skills-grid">
-                    {languageSkills.map((skill, index) =>(
-                     <label key={index} class="skill-item">
-                      <input
-                        type="checkbox"
-                        class="skill-checkbox"
-                        name="skills"
-                        value={skill}
-                        onChange={(e) => toggleSkill(e.target.value)}
-                      />
-                      <span class="skill-label">{skill}</span>
-                    </label>
-                  ))}
+                    {languageSkills.map((skill, index) => (
+                      <label key={index} class="skill-item">
+                        <input
+                          type="checkbox"
+                          class="skill-checkbox"
+                          name="skills"
+                          value={skill}
+                          onChange={(e) => toggleSkill(e.target.value)}
+                        />
+                        <span class="skill-label">{skill}</span>
+                      </label>
+                    ))}
                   </div>
                 </div>
 
@@ -125,18 +159,18 @@ export default function SkillSelect({setSkills, setStep}) {
                     Arts & Design
                   </div>
                   <div class="skills-grid">
-                    {artsDesignSkills.map((skill, index) =>(
-                     <label key={index} class="skill-item">
-                      <input
-                        type="checkbox"
-                        class="skill-checkbox"
-                        name="skills"
-                        value={skill}
-                        onChange={(e) => toggleSkill(e.target.value)}
-                      />
-                      <span class="skill-label">{skill}</span>
-                    </label>
-                  ))}
+                    {artsDesignSkills.map((skill, index) => (
+                      <label key={index} class="skill-item">
+                        <input
+                          type="checkbox"
+                          class="skill-checkbox"
+                          name="skills"
+                          value={skill}
+                          onChange={(e) => toggleSkill(e.target.value)}
+                        />
+                        <span class="skill-label">{skill}</span>
+                      </label>
+                    ))}
                   </div>
                 </div>
 
@@ -146,18 +180,18 @@ export default function SkillSelect({setSkills, setStep}) {
                     Academic
                   </div>
                   <div class="skills-grid">
-                    {academicSkills.map((skill, index) =>(
-                     <label key={index} class="skill-item">
-                      <input
-                        type="checkbox"
-                        class="skill-checkbox"
-                        name="skills"
-                        value={skill}
-                        onChange={(e) => toggleSkill(e.target.value)}
-                      />
-                      <span class="skill-label">{skill}</span>
-                    </label>
-                  ))}
+                    {academicSkills.map((skill, index) => (
+                      <label key={index} class="skill-item">
+                        <input
+                          type="checkbox"
+                          class="skill-checkbox"
+                          name="skills"
+                          value={skill}
+                          onChange={(e) => toggleSkill(e.target.value)}
+                        />
+                        <span class="skill-label">{skill}</span>
+                      </label>
+                    ))}
                   </div>
                 </div>
 
@@ -167,26 +201,27 @@ export default function SkillSelect({setSkills, setStep}) {
                     Fitness & Health
                   </div>
                   <div class="skills-grid">
-                    {fitnessHealthSkills.map((skill, index) =>(
-                     <label key={index} class="skill-item">
-                      <input
-                        type="checkbox"
-                        class="skill-checkbox"
-                        name="skills"
-                        value={skill}
-                        onChange={(e) => toggleSkill(e.target.value)}
-                      />
-                      <span class="skill-label">{skill}</span>
-                    </label>
-                  ))}
+                    {fitnessHealthSkills.map((skill, index) => (
+                      <label key={index} class="skill-item">
+                        <input
+                          type="checkbox"
+                          class="skill-checkbox"
+                          name="skills"
+                          value={skill}
+                          onChange={(e) => toggleSkill(e.target.value)}
+                        />
+                        <span class="skill-label">{skill}</span>
+                      </label>
+                    ))}
                   </div>
                 </div>
 
                 <div className="navigation">
-                   <button style={{visibility:'hidden'}}>
-                  
-                  </button>
-                  <button onClick={handleNextStep} type="button" className="btn btn-primary">
+                  <button style={{ visibility: "hidden" }}></button>
+                  <button
+                    onClick={handleNextStep}
+                    type="button"
+                    className="btn btn-primary">
                     Next Step
                   </button>
                 </div>

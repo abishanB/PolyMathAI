@@ -2,8 +2,13 @@
 
 import { useState } from "react";
 import "./preferences.css";
+import Image from 'next/image'
 //users pick their preffered times for their schedule.
-export default function SchedulePreferences({ setPreferences, setStep, onComplete }) {
+export default function SchedulePreferences({
+  setPreferences,
+  setStep,
+  onComplete,
+}) {
   const [dailyHours, setDailyHours] = useState(2);
   const [selectedTimes, setSelectedTimes] = useState([]);
 
@@ -40,7 +45,7 @@ export default function SchedulePreferences({ setPreferences, setStep, onComplet
   };
 
   const goBack = () => {
-    setStep("skillPriority")
+    setStep("skillPriority");
     // Add navigation logic here
   };
 
@@ -50,7 +55,7 @@ export default function SchedulePreferences({ setPreferences, setStep, onComplet
       selectedTimes: selectedTimes,
     };
     setPreferences(preferencesData);
-    
+
     // If onComplete function is provided, call it instead of setting step
     if (onComplete) {
       onComplete();
@@ -64,10 +69,10 @@ export default function SchedulePreferences({ setPreferences, setStep, onComplet
       <header>
         <div className="container">
           <div className="header-content">
-            <a href="#" className="logo">
-              <div className="logo-icon">P</div>
-              PolymathAI
-            </a>
+            <div className="nav-brand">
+              <Image src="/images/logo.png" alt="Logo" width={40} height={40} />
+              <h1 className="nav-title">PolymathAI</h1>
+            </div>
             <div className="step-indicator">Step 3 of 3</div>
           </div>
         </div>
@@ -113,7 +118,6 @@ export default function SchedulePreferences({ setPreferences, setStep, onComplet
                           setDailyHours(Number.parseFloat(e.target.value))
                         }
                       />
-                     
                     </div>
                     <div className="current-value">
                       {formatHours(dailyHours)}

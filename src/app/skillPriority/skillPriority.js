@@ -1,7 +1,7 @@
 "use client";
 import "./skillPriority.css";
 import { useState } from "react";
-
+import Image from "next/image";
 export default function SkillPriority({ skills, setSkillPriority, setStep }) {
   const [priorities, setPriorities] = useState(
     //set each skills initally to 5/10
@@ -37,10 +37,10 @@ export default function SkillPriority({ skills, setSkillPriority, setStep }) {
       <header>
         <div className="container">
           <div className="header-content">
-            <a href="#" className="logo">
-              <div className="logo-icon">P</div>
-              PolymathAI
-            </a>
+            <div className="nav-brand">
+                        <Image src="/images/logo.png" alt="Logo" width={40} height={40} />
+                        <h1 className="nav-title">PolymathAI</h1>
+                      </div>
             <div className="step-indicator">Step 2 of 3</div>
           </div>
         </div>
