@@ -46,9 +46,9 @@ export default function SkillsPage() {
       console.log('Getting user...');
       const { data: { user }, error } = await supabase.auth.getUser();
       console.log('Auth response:', { user, error });
-      
+
       setUser(user);
-      
+
       if (user) {
         console.log('User found:', user.id);
         // Load user profile from localStorage for now
@@ -57,7 +57,7 @@ export default function SkillsPage() {
           const parsedProfile = JSON.parse(profile);
           setUserProfile(parsedProfile);
         }
-        
+
         // Fetch skills from database
         await fetchUserSkills(user.id);
       } else {
@@ -65,7 +65,7 @@ export default function SkillsPage() {
         setLoading(false);
       }
     };
-    
+
     getUser();
   }, []);
 
@@ -111,7 +111,7 @@ export default function SkillsPage() {
 
   const updatePriority = async (skillName, newPriority) => {
     if (!user) return;
-    
+
     try {
       const { error } = await supabase
         .from('user_skills')
@@ -125,8 +125,8 @@ export default function SkillsPage() {
       }
 
       // Update local state
-      setUserSkills(prev => prev.map(skill => 
-        skill.skill_name === skillName 
+      setUserSkills(prev => prev.map(skill =>
+        skill.skill_name === skillName
           ? { ...skill, priority: newPriority }
           : skill
       ));
@@ -137,12 +137,12 @@ export default function SkillsPage() {
 
   const addSkills = async () => {
     console.log('addSkills called', { newSkills, user });
-    
+
     if (newSkills.length === 0 || !user) {
       console.log('Early return - no skills or no user');
       return;
     }
-    
+
     try {
       const skillsToInsert = newSkills.map(skillName => ({
         user_id: user.id,
@@ -171,10 +171,10 @@ export default function SkillsPage() {
 
       // Update local state
       setUserSkills(prev => [...prev, ...data]);
-      
+
       // Mark schedule for update
       setScheduleNeedsUpdate(true);
-      
+
       // Reset modal state
       setNewSkills([]);
       setSearchTerm("");
@@ -187,7 +187,7 @@ export default function SkillsPage() {
 
   const removeSkill = async (skillToRemove) => {
     if (!user) return;
-    
+
     try {
       const { error } = await supabase
         .from('user_skills')
@@ -203,7 +203,7 @@ export default function SkillsPage() {
       // Update local state
       setUserSkills(prev => prev.filter(skill => skill.skill_name !== skillToRemove));
       setSkillDropdown(null);
-      
+
       // Mark schedule for update
       setScheduleNeedsUpdate(true);
     } catch (error) {
@@ -216,7 +216,7 @@ export default function SkillsPage() {
   const handleAddSkillInput = (e) => {
     if (e.key === "Enter" && searchTerm.trim()) {
       if (newSkills.length >= 5) return;
-      
+
       const skill = capitalizeFirstLetter(searchTerm.trim());
       const existingSkillNames = userSkills.map(s => s.skill_name);
       if (!newSkills.includes(skill) && !existingSkillNames.includes(skill)) {
@@ -232,9 +232,9 @@ export default function SkillsPage() {
 
   const updateSchedule = async () => {
     if (!userProfile || userSkills.length === 0) return;
-    
+
     setIsUpdatingSchedule(true);
-    
+
     try {
       // Create updated profile with current skills and priorities
       const skillNames = userSkills.map(skill => skill.skill_name);
@@ -242,18 +242,18 @@ export default function SkillsPage() {
         acc[skill.skill_name] = skill.priority;
         return acc;
       }, {});
-      
+
       const updatedProfile = {
         skills: skillNames,
         priorities: priorities,
         availableHours: userProfile.availableHours || 2,
         preferredTimes: userProfile.preferredTimes || ['evening'],
       };
-      
+
       // Update localStorage profile
       localStorage.setItem("polymathProfile", JSON.stringify(updatedProfile));
       setUserProfile(updatedProfile);
-      
+
       // Generate new schedule using AI
       const response = await fetch('/api/generate-schedule', {
         method: 'POST',
@@ -262,7 +262,7 @@ export default function SkillsPage() {
         },
         body: JSON.stringify(updatedProfile),
       });
-      
+
       if (response.ok) {
         const { schedule } = await response.json();
         localStorage.setItem("generatedSchedule", JSON.stringify(schedule));
@@ -388,7 +388,7 @@ export default function SkillsPage() {
               <span className="skills-add-icon">+</span>
               Add Skill
             </button>
-            <button 
+            <button
               className={`update-schedule-btn ${scheduleNeedsUpdate ? 'enabled' : 'disabled'}`}
               onClick={updateSchedule}
               disabled={!scheduleNeedsUpdate || isUpdatingSchedule}
@@ -465,7 +465,7 @@ export default function SkillsPage() {
                     <span className={`level-badge ${levelBadge.color}`}>{levelBadge.label}</span>
                   </div>
                   <div className="skill-settings-container">
-                    <button 
+                    <button
                       className="skill-settings-btn"
                       onClick={() => setSkillDropdown(skillDropdown === skillData.skill_name ? null : skillData.skill_name)}
                     >
@@ -473,7 +473,7 @@ export default function SkillsPage() {
                     </button>
                     {skillDropdown === skillData.skill_name && (
                       <div className="skill-dropdown">
-                        <button 
+                        <button
                           className="skill-dropdown-item skill-delete"
                           onClick={() => removeSkill(skillData.skill_name)}
                         >
@@ -534,7 +534,9 @@ export default function SkillsPage() {
                     <button className="skill-action-btn" onClick={() => { setModalSkill(skillData.skill_name); setModalOpen(true); }}>
                       View Progress
                     </button>
-                    <button className="skill-action-btn">Practice Now</button>
+                    <Link href="/dashboard">
+                      <button className="skill-action-btn">Practice Now</button>
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -548,14 +550,14 @@ export default function SkillsPage() {
           feedback={modalSkill ? feedbacks[modalSkill] : ""}
           loading={modalLoading}
         />
-        
+
         {/* Add Skills Modal */}
         {addSkillModalOpen && (
           <div className="modal-overlay">
             <div className="modal-content">
               <div className="modal-header">
                 <h3 className="modal-title">Add New Skills</h3>
-                <button 
+                <button
                   className="modal-close-btn"
                   onClick={() => {
                     setAddSkillModalOpen(false);
@@ -566,10 +568,10 @@ export default function SkillsPage() {
                   ×
                 </button>
               </div>
-              
+
               <div className="modal-body">
                 <p className="modal-subtitle">Type to add skills. Press Enter to add each skill. Maximum 5 skills at once.</p>
-                
+
                 <div className="add-skills-box">
                   <div className="add-skills-tags">
                     {newSkills.map((skill, index) => (
@@ -585,7 +587,7 @@ export default function SkillsPage() {
                       </div>
                     ))}
                   </div>
-                  
+
                   <div className="add-skills-input-section">
                     <input
                       type="text"
@@ -602,9 +604,9 @@ export default function SkillsPage() {
                   </div>
                 </div>
               </div>
-              
+
               <div className="modal-footer">
-                <button 
+                <button
                   className="btn btn-secondary"
                   onClick={() => {
                     setAddSkillModalOpen(false);
@@ -614,7 +616,7 @@ export default function SkillsPage() {
                 >
                   Cancel
                 </button>
-                <button 
+                <button
                   className="btn btn-primary"
                   onClick={addSkills}
                   disabled={newSkills.length === 0}
