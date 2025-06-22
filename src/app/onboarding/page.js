@@ -51,10 +51,30 @@ export default function Onboarding() {
       console.error("Failed to generate schedule with Gemini AI:", error);
     }
     
-    // Mark onboarding as completed in database
+    // Save skills to database and mark onboarding as completed
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
+        // First, save skills to user_skills table
+        const skillsToInsert = skills.map(skillName => ({
+          user_id: user.id,
+          skill_name: skillName,
+          priority: skillPriority[skillName] || 5,
+          total_hours: 0,
+          day_streak: 0
+        }));
+
+        const { error: skillsError } = await supabase
+          .from('user_skills')
+          .insert(skillsToInsert);
+
+        if (skillsError) {
+          console.error("Failed to save skills to database:", skillsError);
+        } else {
+          console.log("Skills saved to database successfully");
+        }
+
+        // Then mark onboarding as completed
         await supabase
           .from('profiles')
           .update({ onboarding_completed: true })
