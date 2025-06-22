@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import "./dashboard.css";
-import React from "react";
 import Navbar from "../components/Navbar";
 
 const formatTo12Hour = (time24) => {
@@ -46,6 +45,21 @@ function ProgressLogModal({ open, onClose, onSubmit, task }) {
   );
 }
 
+function AssessmentModal({ open, onClose }) {
+  if (!open) return null;
+  return (
+    <div className="modal-overlay">
+      <div className="modal">
+        <h2>AI Assessment</h2>
+        <p>This feature is coming soon! Here you will be able to complete an AI-powered assessment for your skills.</p>
+        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+          <button onClick={onClose} className="btn btn-primary">Close</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function DashboardPage() {
   const [userProfile, setUserProfile] = useState(null);
   const [todaySchedule, setTodaySchedule] = useState([]);
@@ -53,6 +67,8 @@ export default function DashboardPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalTask, setModalTask] = useState(null);
+  const [menuOption, setMenuOption] = useState("log");
+  const [assessmentOpen, setAssessmentOpen] = useState(false);
 
   useEffect(() => {
     // Load user profile
@@ -273,6 +289,25 @@ export default function DashboardPage() {
           <p className="dashboard-subtitle">Here&#39;s your AI-optimized schedule for today</p>
         </div>
 
+        {/* Menu for Progress Log or AI Assessment */}
+        <div style={{ display: "flex", gap: 12, marginBottom: 24 }}>
+          <button
+            className={`btn ${menuOption === "log" ? "btn-primary" : "btn-secondary"}`}
+            onClick={() => setMenuOption("log")}
+          >
+            Write Progress Log
+          </button>
+          <button
+            className={`btn ${menuOption === "assessment" ? "btn-primary" : "btn-secondary"}`}
+            onClick={() => {
+              setMenuOption("assessment");
+              setAssessmentOpen(true);
+            }}
+          >
+            Complete AI Assessment
+          </button>
+        </div>
+
         {/* Stats Cards */}
         <div className="stats-grid">
           <div className="stat-card">
@@ -472,10 +507,14 @@ export default function DashboardPage() {
         </div>
       </div>
       <ProgressLogModal
-        open={modalOpen}
+        open={modalOpen && menuOption === "log"}
         onClose={() => setModalOpen(false)}
         onSubmit={(log) => handleProgressLog(modalTask, log)}
         task={modalTask}
+      />
+      <AssessmentModal
+        open={assessmentOpen && menuOption === "assessment"}
+        onClose={() => setAssessmentOpen(false)}
       />
     </div>
   );
