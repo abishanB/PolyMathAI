@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import "./skills.css";
 import Navbar from '../components/Navbar';
+import { supabase } from '../../lib/supabase';
 
 // Modal for skill feedback
 function FeedbackModal({ open, onClose, skill, feedback, loading }) {
@@ -26,7 +27,7 @@ function FeedbackModal({ open, onClose, skill, feedback, loading }) {
 
 export default function SkillsPage() {
   const [userProfile, setUserProfile] = useState(null);
-  const [skillsProgress, setSkillsProgress] = useState([]);
+  const [userSkills, setUserSkills] = useState([]);
   const [feedbacks, setFeedbacks] = useState({});
   const [modalSkill, setModalSkill] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
@@ -35,15 +36,57 @@ export default function SkillsPage() {
   const [newSkills, setNewSkills] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [skillDropdown, setSkillDropdown] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const profile = localStorage.getItem("polymathProfile");
-    if (profile) {
-      const parsedProfile = JSON.parse(profile);
-      setUserProfile(parsedProfile);
-      generateSkillsProgress(parsedProfile);
-    }
+    const getUser = async () => {
+      console.log('Getting user...');
+      const { data: { user }, error } = await supabase.auth.getUser();
+      console.log('Auth response:', { user, error });
+      
+      setUser(user);
+      
+      if (user) {
+        console.log('User found:', user.id);
+        // Load user profile from localStorage for now
+        const profile = localStorage.getItem("polymathProfile");
+        if (profile) {
+          const parsedProfile = JSON.parse(profile);
+          setUserProfile(parsedProfile);
+        }
+        
+        // Fetch skills from database
+        await fetchUserSkills(user.id);
+      } else {
+        console.log('No user found');
+        setLoading(false);
+      }
+    };
+    
+    getUser();
   }, []);
+
+  const fetchUserSkills = async (userId) => {
+    try {
+      const { data, error } = await supabase
+        .from('user_skills')
+        .select('*')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: true });
+
+      if (error) {
+        console.error('Error fetching skills:', error);
+        return;
+      }
+
+      setUserSkills(data || []);
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -59,62 +102,105 @@ export default function SkillsPage() {
     };
   }, [skillDropdown]);
 
-  const generateSkillsProgress = (profile) => {
-    const progress = profile.skills.map((skill) => ({
-      skill,
-      level: Math.floor(Math.random() * 50) + 10, // Random level between 10-60
-      totalHours: Math.floor(Math.random() * 100) + 20, // Random hours between 20-120
-      weeklyHours: Math.floor(Math.random() * 10) + 2, // Random weekly hours between 2-12
-      streak: Math.floor(Math.random() * 30) + 1, // Random streak between 1-30
-    }));
-    setSkillsProgress(progress);
+  const getLevelFromHours = (hours) => {
+    // Convert hours to level (0-100)
+    return Math.min(Math.floor(hours * 2), 100);
   };
 
-  const updatePriority = (skill, newPriority) => {
-    if (!userProfile) return;
+  const updatePriority = async (skillName, newPriority) => {
+    if (!user) return;
+    
+    try {
+      const { error } = await supabase
+        .from('user_skills')
+        .update({ priority: newPriority })
+        .eq('user_id', user.id)
+        .eq('skill_name', skillName);
 
-    const updatedProfile = {
-      ...userProfile,
-      priorities: {
-        ...userProfile.priorities,
-        [skill]: newPriority,
-      },
-    };
-    setUserProfile(updatedProfile);
-    localStorage.setItem("polymathProfile", JSON.stringify(updatedProfile));
+      if (error) {
+        console.error('Error updating priority:', error);
+        return;
+      }
+
+      // Update local state
+      setUserSkills(prev => prev.map(skill => 
+        skill.skill_name === skillName 
+          ? { ...skill, priority: newPriority }
+          : skill
+      ));
+    } catch (error) {
+      console.error('Error:', error);
+    }
   };
 
-  const addSkills = () => {
-    if (newSkills.length === 0) return;
+  const addSkills = async () => {
+    console.log('addSkills called', { newSkills, user });
     
-    const updatedProfile = {
-      ...userProfile,
-      skills: [...userProfile.skills, ...newSkills],
-    };
+    if (newSkills.length === 0 || !user) {
+      console.log('Early return - no skills or no user');
+      return;
+    }
     
-    setUserProfile(updatedProfile);
-    localStorage.setItem("polymathProfile", JSON.stringify(updatedProfile));
-    generateSkillsProgress(updatedProfile);
-    
-    // Reset modal state
-    setNewSkills([]);
-    setSearchTerm("");
-    setAddSkillModalOpen(false);
+    try {
+      const skillsToInsert = newSkills.map(skillName => ({
+        user_id: user.id,
+        skill_name: skillName,
+        priority: 5,
+        total_hours: 0,
+        day_streak: 0
+      }));
+
+      console.log('Inserting skills:', skillsToInsert);
+
+      const { data, error } = await supabase
+        .from('user_skills')
+        .insert(skillsToInsert)
+        .select();
+
+      console.log('Supabase response:', { data, error });
+
+      if (error) {
+        console.error('Error adding skills:', error);
+        alert('Error adding skills: ' + error.message);
+        return;
+      }
+
+      console.log('Skills added successfully:', data);
+
+      // Update local state
+      setUserSkills(prev => [...prev, ...data]);
+      
+      // Reset modal state
+      setNewSkills([]);
+      setSearchTerm("");
+      setAddSkillModalOpen(false);
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error: ' + error.message);
+    }
   };
 
-  const removeSkill = (skillToRemove) => {
-    const updatedProfile = {
-      ...userProfile,
-      skills: userProfile.skills.filter(skill => skill !== skillToRemove),
-      priorities: Object.fromEntries(
-        Object.entries(userProfile.priorities || {}).filter(([key]) => key !== skillToRemove)
-      ),
-    };
+  const removeSkill = async (skillToRemove) => {
+    if (!user) return;
     
-    setUserProfile(updatedProfile);
-    localStorage.setItem("polymathProfile", JSON.stringify(updatedProfile));
-    generateSkillsProgress(updatedProfile);
-    setSkillDropdown(null);
+    try {
+      const { error } = await supabase
+        .from('user_skills')
+        .delete()
+        .eq('user_id', user.id)
+        .eq('skill_name', skillToRemove);
+
+      if (error) {
+        console.error('Error deleting skill:', error);
+        return;
+      }
+
+      // Update local state
+      setUserSkills(prev => prev.filter(skill => skill.skill_name !== skillToRemove));
+      setSkillDropdown(null);
+    } catch (error) {
+      console.error('Error:', error);
+    }
   };
 
   const capitalizeFirstLetter = (skill) => skill.charAt(0).toUpperCase() + skill.slice(1);
@@ -124,7 +210,8 @@ export default function SkillsPage() {
       if (newSkills.length >= 5) return;
       
       const skill = capitalizeFirstLetter(searchTerm.trim());
-      if (!newSkills.includes(skill) && !userProfile.skills.includes(skill)) {
+      const existingSkillNames = userSkills.map(s => s.skill_name);
+      if (!newSkills.includes(skill) && !existingSkillNames.includes(skill)) {
         setNewSkills([...newSkills, skill]);
       }
       setSearchTerm("");
@@ -149,43 +236,43 @@ export default function SkillsPage() {
 
   // Fetch feedback for all skills
   useEffect(() => {
-    if (!userProfile) return;
+    if (userSkills.length === 0) return;
     const fetchAllFeedbacks = async () => {
       const logs = JSON.parse(localStorage.getItem("progressLogs") || "[]");
       const feedbackMap = {};
-      for (const skill of userProfile.skills) {
+      for (const skill of userSkills) {
         setModalLoading(true);
         const res = await fetch("/api/generate-skill-feedback", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ skillId: skill })
+          body: JSON.stringify({ skillId: skill.skill_name })
         });
         const data = await res.json();
-        feedbackMap[skill] = data.feedback || "No feedback.";
+        feedbackMap[skill.skill_name] = data.feedback || "No feedback.";
       }
       setFeedbacks(feedbackMap);
       setModalLoading(false);
     };
     fetchAllFeedbacks();
-  }, [userProfile]);
+  }, [userSkills]);
 
   // Regenerate feedback if journal logs change
   useEffect(() => {
     const handleStorage = (e) => {
       if (e.key === "progressLogs") {
         // Re-fetch feedbacks
-        if (userProfile) {
+        if (userSkills.length > 0) {
           const fetchAllFeedbacks = async () => {
             const feedbackMap = {};
-            for (const skill of userProfile.skills) {
+            for (const skill of userSkills) {
               setModalLoading(true);
               const res = await fetch("/api/generate-skill-feedback", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ skillId: skill })
+                body: JSON.stringify({ skillId: skill.skill_name })
               });
               const data = await res.json();
-              feedbackMap[skill] = data.feedback || "No feedback.";
+              feedbackMap[skill.skill_name] = data.feedback || "No feedback.";
             }
             setFeedbacks(feedbackMap);
             setModalLoading(false);
@@ -196,7 +283,20 @@ export default function SkillsPage() {
     };
     window.addEventListener("storage", handleStorage);
     return () => window.removeEventListener("storage", handleStorage);
-  }, [userProfile]);
+  }, [userSkills]);
+
+  if (loading) {
+    return (
+      <div className="skills-loading">
+        <div className="skills-loading-card">
+          <div className="skills-loading-header">
+            <h2 className="skills-loading-title">Loading Skills...</h2>
+            <p className="skills-loading-description">Please wait while we fetch your skills</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (!userProfile) {
     return (
@@ -241,7 +341,7 @@ export default function SkillsPage() {
                 <div className="overview-icon overview-icon-purple">🎯</div>
                 <div className="overview-info">
                   <p className="overview-label">Total Skills</p>
-                  <p className="overview-value">{userProfile.skills.length}</p>
+                  <p className="overview-value">{userSkills.length}</p>
                 </div>
               </div>
             </div>
@@ -253,7 +353,7 @@ export default function SkillsPage() {
                 <div className="overview-icon overview-icon-blue">⏰</div>
                 <div className="overview-info">
                   <p className="overview-label">Weekly Hours</p>
-                  <p className="overview-value">{skillsProgress.reduce((sum, skill) => sum + skill.weeklyHours, 0)}h</p>
+                  <p className="overview-value">{Math.round(userSkills.reduce((sum, skill) => sum + parseFloat(skill.total_hours), 0))}h</p>
                 </div>
               </div>
             </div>
@@ -266,7 +366,7 @@ export default function SkillsPage() {
                 <div className="overview-info">
                   <p className="overview-label">Avg Level</p>
                   <p className="overview-value">
-                    {skillsProgress.length > 0 ? Math.round(skillsProgress.reduce((sum, skill) => sum + skill.level, 0) / skillsProgress.length) : 0}
+                    {userSkills.length > 0 ? Math.round(userSkills.reduce((sum, skill) => sum + getLevelFromHours(skill.total_hours), 0) / userSkills.length) : 0}
                   </p>
                 </div>
               </div>
@@ -279,7 +379,7 @@ export default function SkillsPage() {
                 <div className="overview-icon overview-icon-orange">⭐</div>
                 <div className="overview-info">
                   <p className="overview-label">Best Streak</p>
-                  <p className="overview-value">{skillsProgress.length > 0 ? Math.max(...skillsProgress.map((skill) => skill.streak)) : 0} days</p>
+                  <p className="overview-value">{userSkills.length > 0 ? Math.max(...userSkills.map((skill) => skill.day_streak)) : 0} days</p>
                 </div>
               </div>
             </div>
@@ -288,29 +388,29 @@ export default function SkillsPage() {
 
         {/* Skills List */}
         <div className="skills-list">
-          {skillsProgress.map((skillData) => {
-            const levelBadge = getLevelBadge(skillData.level);
-            const priority = userProfile.priorities[skillData.skill] || 5;
+          {userSkills.map((skillData) => {
+            const level = getLevelFromHours(skillData.total_hours);
+            const levelBadge = getLevelBadge(level);
 
             return (
-              <div key={skillData.skill} className="skill-card">
+              <div key={skillData.id} className="skill-card">
                 <div className="skill-card-header">
                   <div className="skill-badges">
-                    <span className={`skill-badge ${getSkillColor(skillData.skill)}`}>{skillData.skill}</span>
+                    <span className={`skill-badge ${getSkillColor(skillData.skill_name)}`}>{skillData.skill_name}</span>
                     <span className={`level-badge ${levelBadge.color}`}>{levelBadge.label}</span>
                   </div>
                   <div className="skill-settings-container">
                     <button 
                       className="skill-settings-btn"
-                      onClick={() => setSkillDropdown(skillDropdown === skillData.skill ? null : skillData.skill)}
+                      onClick={() => setSkillDropdown(skillDropdown === skillData.skill_name ? null : skillData.skill_name)}
                     >
                       <span className="skill-settings-icon">⚙️</span>
                     </button>
-                    {skillDropdown === skillData.skill && (
+                    {skillDropdown === skillData.skill_name && (
                       <div className="skill-dropdown">
                         <button 
                           className="skill-dropdown-item skill-delete"
-                          onClick={() => removeSkill(skillData.skill)}
+                          onClick={() => removeSkill(skillData.skill_name)}
                         >
                           <span className="skill-dropdown-icon">🗑️</span>
                           Delete Skill
@@ -324,12 +424,12 @@ export default function SkillsPage() {
                   <div className="skill-progress-section">
                     <div className="skill-progress-header">
                       <span>Level Progress</span>
-                      <span>{skillData.level}%</span>
+                      <span>{level}%</span>
                     </div>
                     <div className="skill-progress-bar">
                       <div
                         className="skill-progress-fill"
-                        style={{ width: `${skillData.level}%` }}
+                        style={{ width: `${level}%` }}
                       ></div>
                     </div>
                   </div>
@@ -337,15 +437,11 @@ export default function SkillsPage() {
                   {/* Stats */}
                   <div className="skill-stats">
                     <div className="skill-stat">
-                      <p className="skill-stat-value">{skillData.totalHours}</p>
+                      <p className="skill-stat-value">{Math.round(skillData.total_hours)}</p>
                       <p className="skill-stat-label">Total Hours</p>
                     </div>
                     <div className="skill-stat">
-                      <p className="skill-stat-value">{skillData.weeklyHours}</p>
-                      <p className="skill-stat-label">This Week</p>
-                    </div>
-                    <div className="skill-stat">
-                      <p className="skill-stat-value">{skillData.streak}</p>
+                      <p className="skill-stat-value">{skillData.day_streak}</p>
                       <p className="skill-stat-label">Day Streak</p>
                     </div>
                   </div>
@@ -354,23 +450,23 @@ export default function SkillsPage() {
                   <div className="priority-section">
                     <div className="priority-header">
                       <label className="priority-label">Priority</label>
-                      <span className="priority-value">{priority}/10</span>
+                      <span className="priority-value">{skillData.priority}/10</span>
                     </div>
                     <div className="priority-slider-container">
                       <input
                         type="range"
                         min="1"
                         max="10"
-                        value={priority}
+                        value={skillData.priority}
                         className="priority-slider"
-                        onChange={(e) => updatePriority(skillData.skill, parseInt(e.target.value))}
+                        onChange={(e) => updatePriority(skillData.skill_name, parseInt(e.target.value))}
                       />
                     </div>
                   </div>
 
                   {/* Action Buttons */}
                   <div className="skill-actions">
-                    <button className="skill-action-btn" onClick={() => { setModalSkill(skillData.skill); setModalOpen(true); }}>
+                    <button className="skill-action-btn" onClick={() => { setModalSkill(skillData.skill_name); setModalOpen(true); }}>
                       View Progress
                     </button>
                     <button className="skill-action-btn">Practice Now</button>
