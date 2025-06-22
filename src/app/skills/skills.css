@@ -883,4 +883,56 @@
   .modal-footer {
     padding: 1rem;
   }
+}/* Header buttons container */
+.skills-header-buttons {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+/* Update Schedule Button */
+.update-schedule-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+  font-size: 0.875rem;
+}
+
+.update-schedule-btn.enabled {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border-color: #10b981;
+}
+
+.update-schedule-btn.enabled:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+}
+
+.update-schedule-btn.disabled {
+  background: #f3f4f6;
+  color: #9ca3af;
+  border-color: #e5e7eb;
+  cursor: not-allowed;
+}
+
+.update-schedule-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+@media (max-width: 767px) {
+  .skills-header-buttons {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
 }
