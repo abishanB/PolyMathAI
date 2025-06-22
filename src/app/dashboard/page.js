@@ -46,10 +46,30 @@ function ProgressLogModal({ open, onClose, onSubmit, task }) {
 }
 
 function AssessmentModal({ open, onClose, task }) {
-  const [messages, setMessages] = useState([
-    { sender: "ai", text: `Let's assess your progress on: ${task?.task || "this skill"}. What was your biggest challenge today?` }
-  ]);
+  const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (open && task) {
+      setMessages([]);
+      setLoading(true);
+      fetch("/api/generate-assessment-question", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ task: task.task })
+      })
+        .then(res => res.json())
+        .then(data => {
+          setMessages([{ sender: "ai", text: data.question }]);
+          setLoading(false);
+        })
+        .catch(() => {
+          setMessages([{ sender: "ai", text: "What was your biggest challenge today?" }]);
+          setLoading(false);
+        });
+    }
+  }, [open, task]);
 
   if (!open) return null;
 
@@ -65,14 +85,18 @@ function AssessmentModal({ open, onClose, task }) {
       <div className="modal" style={{ maxWidth: 400 }}>
         <h2>AI Assessment</h2>
         <div style={{ maxHeight: 200, overflowY: "auto", marginBottom: 12, background: "#f7f7fa", padding: 8, borderRadius: 6 }}>
-          {messages.map((msg, idx) => (
-            <div key={idx} style={{ textAlign: msg.sender === "ai" ? "left" : "right", margin: "8px 0" }}>
-              <span style={{ fontWeight: msg.sender === "ai" ? 600 : 400 }}>
-                {msg.sender === "ai" ? "AI: " : "You: "}
-              </span>
-              {msg.text}
-            </div>
-          ))}
+          {loading ? (
+            <div>Loading question...</div>
+          ) : (
+            messages.map((msg, idx) => (
+              <div key={idx} style={{ textAlign: msg.sender === "ai" ? "left" : "right", margin: "8px 0" }}>
+                <span style={{ fontWeight: msg.sender === "ai" ? 600 : 400 }}>
+                  {msg.sender === "ai" ? "AI: " : "You: "}
+                </span>
+                {msg.text}
+              </div>
+            ))
+          )}
         </div>
         <div style={{ display: "flex", gap: 8 }}>
           <input
@@ -82,8 +106,9 @@ function AssessmentModal({ open, onClose, task }) {
             placeholder="Type your answer..."
             style={{ flex: 1, padding: 6, borderRadius: 4, border: "1px solid #ccc" }}
             onKeyDown={e => { if (e.key === "Enter") handleSend(); }}
+            disabled={loading}
           />
-          <button className="btn btn-primary" onClick={handleSend} disabled={!input.trim()}>
+          <button className="btn btn-primary" onClick={handleSend} disabled={!input.trim() || loading}>
             Send
           </button>
         </div>
