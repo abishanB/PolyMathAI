@@ -38,6 +38,8 @@ export default function SkillsPage() {
   const [skillDropdown, setSkillDropdown] = useState(null);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
+  const [scheduleNeedsUpdate, setScheduleNeedsUpdate] = useState(false);
+  const [isUpdatingSchedule, setIsUpdatingSchedule] = useState(false);
 
   useEffect(() => {
     const getUser = async () => {
@@ -170,6 +172,9 @@ export default function SkillsPage() {
       // Update local state
       setUserSkills(prev => [...prev, ...data]);
       
+      // Mark schedule for update
+      setScheduleNeedsUpdate(true);
+      
       // Reset modal state
       setNewSkills([]);
       setSearchTerm("");
@@ -198,6 +203,9 @@ export default function SkillsPage() {
       // Update local state
       setUserSkills(prev => prev.filter(skill => skill.skill_name !== skillToRemove));
       setSkillDropdown(null);
+      
+      // Mark schedule for update
+      setScheduleNeedsUpdate(true);
     } catch (error) {
       console.error('Error:', error);
     }
@@ -220,6 +228,54 @@ export default function SkillsPage() {
 
   const removeNewSkill = (skillToRemove) => {
     setNewSkills(newSkills.filter(skill => skill !== skillToRemove));
+  };
+
+  const updateSchedule = async () => {
+    if (!userProfile || userSkills.length === 0) return;
+    
+    setIsUpdatingSchedule(true);
+    
+    try {
+      // Create updated profile with current skills and priorities
+      const skillNames = userSkills.map(skill => skill.skill_name);
+      const priorities = userSkills.reduce((acc, skill) => {
+        acc[skill.skill_name] = skill.priority;
+        return acc;
+      }, {});
+      
+      const updatedProfile = {
+        skills: skillNames,
+        priorities: priorities,
+        availableHours: userProfile.availableHours || 2,
+        preferredTimes: userProfile.preferredTimes || ['evening'],
+      };
+      
+      // Update localStorage profile
+      localStorage.setItem("polymathProfile", JSON.stringify(updatedProfile));
+      setUserProfile(updatedProfile);
+      
+      // Generate new schedule using AI
+      const response = await fetch('/api/generate-schedule', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedProfile),
+      });
+      
+      if (response.ok) {
+        const { schedule } = await response.json();
+        localStorage.setItem("generatedSchedule", JSON.stringify(schedule));
+        console.log("Schedule updated successfully");
+        setScheduleNeedsUpdate(false);
+      } else {
+        console.error("Failed to generate new schedule");
+      }
+    } catch (error) {
+      console.error("Error updating schedule:", error);
+    } finally {
+      setIsUpdatingSchedule(false);
+    }
   };
 
   const getSkillColor = (skill) => {
@@ -327,10 +383,19 @@ export default function SkillsPage() {
             <h1 className="skills-title">Your Skills</h1>
             <p className="skills-subtitle">Manage your learning priorities and track progress</p>
           </div>
-          <button className="skills-add-btn" onClick={() => setAddSkillModalOpen(true)}>
-            <span className="skills-add-icon">+</span>
-            Add Skill
-          </button>
+          <div className="skills-header-buttons">
+            <button className="skills-add-btn" onClick={() => setAddSkillModalOpen(true)}>
+              <span className="skills-add-icon">+</span>
+              Add Skill
+            </button>
+            <button 
+              className={`update-schedule-btn ${scheduleNeedsUpdate ? 'enabled' : 'disabled'}`}
+              onClick={updateSchedule}
+              disabled={!scheduleNeedsUpdate || isUpdatingSchedule}
+            >
+              {isUpdatingSchedule ? 'Updating...' : 'Update Schedule'}
+            </button>
+          </div>
         </div>
 
         {/* Skills Overview */}
