@@ -289,25 +289,6 @@ export default function DashboardPage() {
           <p className="dashboard-subtitle">Here&#39;s your AI-optimized schedule for today</p>
         </div>
 
-        {/* Menu for Progress Log or AI Assessment */}
-        <div style={{ display: "flex", gap: 12, marginBottom: 24 }}>
-          <button
-            className={`btn ${menuOption === "log" ? "btn-primary" : "btn-secondary"}`}
-            onClick={() => setMenuOption("log")}
-          >
-            Write Progress Log
-          </button>
-          <button
-            className={`btn ${menuOption === "assessment" ? "btn-primary" : "btn-secondary"}`}
-            onClick={() => {
-              setMenuOption("assessment");
-              setAssessmentOpen(true);
-            }}
-          >
-            Complete AI Assessment
-          </button>
-        </div>
-
         {/* Stats Cards */}
         <div className="stats-grid">
           <div className="stat-card">
@@ -395,6 +376,8 @@ export default function DashboardPage() {
                           onClick={() => {
                             if (!isCompleted) {
                               setModalTask(item);
+                              // Show the menu when clicking the completion button
+                              setMenuOption(null); // Reset menu selection
                               setModalOpen(true);
                             }
                           }}
@@ -506,16 +489,44 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
-      <ProgressLogModal
-        open={modalOpen && menuOption === "log"}
-        onClose={() => setModalOpen(false)}
-        onSubmit={(log) => handleProgressLog(modalTask, log)}
-        task={modalTask}
-      />
-      <AssessmentModal
-        open={assessmentOpen && menuOption === "assessment"}
-        onClose={() => setAssessmentOpen(false)}
-      />
+      {/* Menu Modal for Progress Log or AI Assessment, shown only when modalOpen is true */}
+      {modalOpen && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h2>Choose an Action</h2>
+            <div style={{ display: "flex", gap: 12, marginBottom: 24 }}>
+              <button
+                className={`btn ${menuOption === "log" ? "btn-primary" : "btn-secondary"}`}
+                onClick={() => setMenuOption("log")}
+              >
+                Write Progress Log
+              </button>
+              <button
+                className={`btn ${menuOption === "assessment" ? "btn-primary" : "btn-secondary"}`}
+                onClick={() => setMenuOption("assessment")}
+              >
+                Complete AI Assessment
+              </button>
+            </div>
+            <div>
+              {menuOption === "log" && (
+                <ProgressLogModal
+                  open={true}
+                  onClose={() => setModalOpen(false)}
+                  onSubmit={(log) => handleProgressLog(modalTask, log)}
+                  task={modalTask}
+                />
+              )}
+              {menuOption === "assessment" && (
+                <AssessmentModal
+                  open={true}
+                  onClose={() => setModalOpen(false)}
+                />
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
