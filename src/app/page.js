@@ -192,7 +192,7 @@ export default function Home() {
                 </div>
                 <h3>Set Your Availability</h3>
                 <p>
-                  Tell us when you're free to learn and how much time you want to dedicate to each skill.
+                  Tell us when you&#39;re free to learn and how much time you want to dedicate to each skill.
                 </p>
               </div>
 
@@ -213,13 +213,13 @@ export default function Home() {
           <div className="container">
             <div className="schedule-preview-header">
               <h2>Your AI-Generated Schedule</h2>
-              <p>Here's what a typical day might look like</p>
+              <p>Here&#39;s what a typical day might look like</p>
             </div>
 
             <div className="schedule-card">
               <div className="schedule-header">
                 <span>📅</span>
-                <h3>Today's Learning Schedule</h3>
+                <h3>Today&#39;s Learning Schedule</h3>
               </div>
               <div className="schedule-content">
                 <div className="schedule-item schedule-item-purple">

@@ -70,7 +70,7 @@ export default function SkillSelect({passSkillsToParent, setStep }) {
         <div className="skills-container">
           <h2 className="skills-title">What do you want to learn?</h2>
           <p className="skills-subtitle">
-            Type to Add Skills. Don't Worry! You can always add more later. Max
+            Type to Add Skills. Don&#39;t Worry! You can always add more later. Max
             5
           </p>
 

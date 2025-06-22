@@ -192,7 +192,7 @@ export default function CalendarPage() {
         <div className="calendar-summary">
           <div className="summary-card">
             <div className="summary-card-header">
-              <h3 className="summary-title">This Week's Focus</h3>
+              <h3 className="summary-title">This Week&#39;s Focus</h3>
             </div>
             <div className="summary-card-content">
               <div className="summary-skills">

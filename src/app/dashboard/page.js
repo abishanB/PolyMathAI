@@ -235,7 +235,7 @@ export default function DashboardPage() {
         <div className="loading-card">
           <div className="loading-card-header">
             <h2 className="loading-card-title">Welcome to PolymathAI</h2>
-            <p className="loading-card-description">Let's set up your learning profile first</p>
+            <p className="loading-card-description">Let&#39;s set up your learning profile first</p>
           </div>
           <div className="loading-card-content">
             <Link href="/onboarding">
@@ -270,7 +270,7 @@ export default function DashboardPage() {
         {/* Header */}
         <div className="dashboard-header">
           <h1 className="dashboard-title">Good evening! Ready to learn?</h1>
-          <p className="dashboard-subtitle">Here's your AI-optimized schedule for today</p>
+          <p className="dashboard-subtitle">Here&#39;s your AI-optimized schedule for today</p>
         </div>
 
         {/* Stats Cards */}
@@ -280,7 +280,7 @@ export default function DashboardPage() {
               <div className="stat-item">
                 <div className="stat-icon stat-icon-purple">🎯</div>
                 <div className="stat-info">
-                  <p className="stat-label">Today's Progress</p>
+                  <p className="stat-label">Today&#39;s Progress</p>
                   <p className="stat-value">{Math.round(completionRate)}%</p>
                 </div>
               </div>
@@ -325,15 +325,15 @@ export default function DashboardPage() {
         </div>
 
         <div className="dashboard-grid">
-          {/* Today's Schedule */}
+          {/* Today&#39;s Schedule */}
           <div className="schedule-section">
             <div className="schedule-card">
               <div className="schedule-card-header">
                 <div className="schedule-header">
                   <div>
                     <h2 className="schedule-title">
-                      <span className="schedule-icon">📅</span>
-                      Today's Schedule
+                      <span className="schedule-icon"></span>
+                      Today&#39;s Schedule
                     </h2>
                     <p className="schedule-description">
                       {new Date().toLocaleDateString("en-US", {
@@ -396,7 +396,7 @@ export default function DashboardPage() {
             {/* Progress Overview */}
             <div className="sidebar-card">
               <div className="sidebar-card-header">
-                <h3>Today's Progress</h3>
+                <h3>Today&#39;s Progress</h3>
               </div>
               <div className="sidebar-card-content">
                 <div className="progress-section">

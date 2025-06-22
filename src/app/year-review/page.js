@@ -135,12 +135,12 @@ export default function YearReviewPage() {
               <h1 className="welcome-title">Your 2024</h1>
               <h2 className="welcome-subtitle">Learning Journey</h2>
               <p className="welcome-description">
-                This year, you embarked on an incredible polymath journey. Let's celebrate your dedication, growth, and
-                the amazing skills you've developed.
+                This year, you embarked on an incredible polymath journey. Let&#39;s celebrate your dedication, growth, and
+                the amazing skills you&#39;ve developed.
               </p>
             </div>
             <button onClick={nextSlide} className="welcome-btn">
-              Let's Begin
+              Let&#39;s Begin
               <span className="btn-icon">›</span>
             </button>
           </div>
@@ -156,7 +156,7 @@ export default function YearReviewPage() {
                   <span className="year-stat-icon year-stat-icon-blue">⏰</span>
                   <div className="year-stat-value">{yearStats.totalHours}</div>
                   <div className="year-stat-label">Hours Learned</div>
-                  <div className="year-stat-note">That's {Math.round(yearStats.totalHours / 24)} full days!</div>
+                  <div className="year-stat-note">That&#39;s {Math.round(yearStats.totalHours / 24)} full days!</div>
                 </div>
               </div>
 
@@ -357,7 +357,7 @@ export default function YearReviewPage() {
               <span className="ahead-icon">⭐</span>
               <h2 className="slide-title">Looking Ahead to 2025</h2>
               <p className="slide-description">
-                You've built incredible momentum in 2024. Your polymath journey is just getting started!
+                You&#39;ve built incredible momentum in 2024. Your polymath journey is just getting started!
               </p>
 
               <div className="summary-card">
