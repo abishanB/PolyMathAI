@@ -45,15 +45,50 @@ function ProgressLogModal({ open, onClose, onSubmit, task }) {
   );
 }
 
-function AssessmentModal({ open, onClose }) {
+function AssessmentModal({ open, onClose, task }) {
+  const [messages, setMessages] = useState([
+    { sender: "ai", text: `Let's assess your progress on: ${task?.task || "this skill"}. What was your biggest challenge today?` }
+  ]);
+  const [input, setInput] = useState("");
+
   if (!open) return null;
+
+  const handleSend = () => {
+    if (!input.trim()) return;
+    setMessages([...messages, { sender: "user", text: input }]);
+    setInput("");
+    // Optionally, you could add a fake AI reply here for demo
+  };
+
   return (
     <div className="modal-overlay">
-      <div className="modal">
+      <div className="modal" style={{ maxWidth: 400 }}>
         <h2>AI Assessment</h2>
-        <p>This feature is coming soon! Here you will be able to complete an AI-powered assessment for your skills.</p>
-        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
-          <button onClick={onClose} className="btn btn-primary">Close</button>
+        <div style={{ maxHeight: 200, overflowY: "auto", marginBottom: 12, background: "#f7f7fa", padding: 8, borderRadius: 6 }}>
+          {messages.map((msg, idx) => (
+            <div key={idx} style={{ textAlign: msg.sender === "ai" ? "left" : "right", margin: "8px 0" }}>
+              <span style={{ fontWeight: msg.sender === "ai" ? 600 : 400 }}>
+                {msg.sender === "ai" ? "AI: " : "You: "}
+              </span>
+              {msg.text}
+            </div>
+          ))}
+        </div>
+        <div style={{ display: "flex", gap: 8 }}>
+          <input
+            type="text"
+            value={input}
+            onChange={e => setInput(e.target.value)}
+            placeholder="Type your answer..."
+            style={{ flex: 1, padding: 6, borderRadius: 4, border: "1px solid #ccc" }}
+            onKeyDown={e => { if (e.key === "Enter") handleSend(); }}
+          />
+          <button className="btn btn-primary" onClick={handleSend} disabled={!input.trim()}>
+            Send
+          </button>
+        </div>
+        <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 12 }}>
+          <button onClick={onClose} className="btn btn-secondary">Close</button>
         </div>
       </div>
     </div>
@@ -521,6 +556,7 @@ export default function DashboardPage() {
                 <AssessmentModal
                   open={true}
                   onClose={() => setModalOpen(false)}
+                  task={modalTask}
                 />
               )}
             </div>
