@@ -8,7 +8,7 @@ function Modal({ open, onClose, log, onFeedback }) {
     const [feedback, setFeedback] = useState(log?.feedback || "");
 
     useEffect(() => {
-        if (open && log && !log.feedback && !loading) {
+        if (open && log && !log.feedback && !loading && !log.isAssessment) {
             setLoading(true);
             fetch("/api/generate-feedback", {
                 method: "POST",
@@ -35,7 +35,8 @@ function Modal({ open, onClose, log, onFeedback }) {
     return (
         <div style={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh", background: "rgba(0,0,0,0.3)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center" }}>
             <div style={{
-                background: "#fff",
+                background: log.isAssessment ? "#f6fff0" : "#fff", // light green for assessment
+                border: log.isAssessment ? "1.5px solid #b2e5b2" : "none", // green border for assessment
                 borderRadius: 10,
                 padding: 32,
                 maxWidth: 500,
@@ -51,10 +52,17 @@ function Modal({ open, onClose, log, onFeedback }) {
                 <div style={{ fontWeight: 600, fontSize: 20, marginBottom: 8 }}>{log.taskName} <span style={{ color: '#888', fontWeight: 400 }}>({log.skill})</span></div>
                 <div style={{ color: "#666", fontSize: 14, marginBottom: 8 }}>{new Date(log.timestamp).toLocaleString()}</div>
                 <div style={{ whiteSpace: "pre-wrap", fontSize: 16, marginBottom: 18 }}>{log.log}</div>
-                <div style={{ background: "#f0f7ff", borderRadius: 6, padding: 12, fontSize: 15, color: "#1a4a7a" }}>
-                    <b>AI Feedback & Advice:</b><br />
-                    {loading ? "Generating feedback..." : feedback}
-                </div>
+                {log.isAssessment ? (
+                    <div style={{ background: "#e6ffe6", borderRadius: 6, padding: 12, fontSize: 15, color: "#1a7a4a", border: "1px solid #b2e5b2" }}>
+                        <b>AI Assessment Result:</b><br />
+                        {log.log.replace(/^\[AI Assessment\]\s*/, "")}
+                    </div>
+                ) : (
+                    <div style={{ background: "#f0f7ff", borderRadius: 6, padding: 12, fontSize: 15, color: "#1a4a7a" }}>
+                        <b>AI Feedback & Advice:</b><br />
+                        {loading ? "Generating feedback..." : feedback}
+                    </div>
+                )}
             </div>
         </div>
     );
@@ -95,7 +103,7 @@ export default function JournalPage() {
                         {logs
                             .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
                             .map((log) => (
-                                <div key={log.id} style={{ border: "1px solid #eee", borderRadius: 8, padding: 20, background: "#fafbfc", cursor: "pointer" }}
+                                <div key={log.id} style={{ border: log.isAssessment ? "1.5px solid #b2e5b2" : "1px solid #eee", borderRadius: 8, padding: 20, background: log.isAssessment ? "#f6fff0" : "#fafbfc", cursor: "pointer" }}
                                     onClick={() => handleLogClick(log)}
                                     title="Click to view full log and feedback"
                                 >
@@ -104,6 +112,9 @@ export default function JournalPage() {
                                     <div style={{ whiteSpace: "pre-wrap", fontSize: 16, color: '#444' }}>
                                         {log.log.length > 100 ? log.log.slice(0, 100) + '...' : log.log}
                                     </div>
+                                    {log.isAssessment && (
+                                        <div style={{ marginTop: 8, color: "#1a7a4a", fontWeight: 500, fontSize: 14 }}>[AI Assessment]</div>
+                                    )}
                                 </div>
                             ))}
                     </div>

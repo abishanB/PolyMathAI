@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import "./dashboard.css";
-import React from "react";
 import Navbar from "../components/Navbar";
 
 const formatTo12Hour = (time24) => {
@@ -46,6 +45,144 @@ function ProgressLogModal({ open, onClose, onSubmit, task }) {
   );
 }
 
+function AssessmentModal({ open, onClose, task }) {
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [assessmentResult, setAssessmentResult] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [question, setQuestion] = useState("");
+
+  useEffect(() => {
+    if (open && task) {
+      setMessages([]);
+      setAssessmentResult(null);
+      setLoading(true);
+      setInput("");
+      setQuestion("");
+      fetch("/api/generate-assessment-question", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ task: task.task })
+      })
+        .then(res => res.json())
+        .then(data => {
+          setMessages([{ sender: "ai", text: data.question }]);
+          setQuestion(data.question);
+          setLoading(false);
+        })
+        .catch(() => {
+          setMessages([{ sender: "ai", text: "What was your biggest challenge today?" }]);
+          setQuestion("What was your biggest challenge today?");
+          setLoading(false);
+        });
+    }
+  }, [open, task]);
+
+  if (!open) return null;
+
+  const handleSend = async () => {
+    if (!input.trim()) return;
+    const userMsg = { sender: "user", text: input };
+    setMessages([...messages, userMsg]);
+    setInput("");
+    setLoading(true);
+    // Call assessment API
+    try {
+      const res = await fetch("/api/assess-learning", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          question,
+          userResponse: input,
+          task: task.task,
+          skill: task.skill
+        })
+      });
+      const data = await res.json();
+      setAssessmentResult(data.assessment);
+      setMessages([...messages, userMsg, { sender: "ai", text: data.assessment }]);
+    } catch {
+      setAssessmentResult("Assessment not available.");
+      setMessages([...messages, userMsg, { sender: "ai", text: "Assessment not available." }]);
+    }
+    setLoading(false);
+  };
+
+  // Save assessment result to Journal (localStorage)
+  const handleClose = () => {
+    if (assessmentResult && task) {
+      setSaving(true);
+      const logs = JSON.parse(localStorage.getItem("progressLogs") || "[]");
+      logs.push({
+        id: Date.now(),
+        taskId: task.id,
+        skill: task.skill,
+        taskName: task.task,
+        log: `[AI Assessment] ${assessmentResult}`,
+        timestamp: new Date().toISOString(),
+        isAssessment: true
+      });
+      localStorage.setItem("progressLogs", JSON.stringify(logs));
+      setSaving(false);
+      // Mark the task as completed
+      const completed = JSON.parse(localStorage.getItem("completedTasks") || "[]");
+      if (!completed.includes(task.id)) {
+        completed.push(task.id);
+        localStorage.setItem("completedTasks", JSON.stringify(completed));
+      }
+    }
+    onClose();
+  };
+
+  return (
+    <div className="modal-overlay">
+      <div className="modal" style={{ maxWidth: 400 }}>
+        <h2>AI Assessment</h2>
+        <div style={{ maxHeight: 200, overflowY: "auto", marginBottom: 12, background: "#f7f7fa", padding: 8, borderRadius: 6 }}>
+          {loading && messages.length === 0 ? (
+            <div>Loading question...</div>
+          ) : (
+            messages.map((msg, idx) => (
+              <div key={idx} style={{ textAlign: msg.sender === "ai" ? "left" : "right", margin: "8px 0" }}>
+                <span style={{ fontWeight: msg.sender === "ai" ? 600 : 400 }}>
+                  {msg.sender === "ai" ? "AI: " : "You: "}
+                </span>
+                {msg.text}
+              </div>
+            ))
+          )}
+        </div>
+        {!assessmentResult && (
+          <div style={{ display: "flex", gap: 8 }}>
+            <input
+              type="text"
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              placeholder="Type your answer..."
+              style={{ flex: 1, padding: 6, borderRadius: 4, border: "1px solid #ccc" }}
+              onKeyDown={e => { if (e.key === "Enter") handleSend(); }}
+              disabled={loading}
+            />
+            <button className="btn btn-primary" onClick={handleSend} disabled={!input.trim() || loading}>
+              Send
+            </button>
+          </div>
+        )}
+        {assessmentResult && (
+          <div style={{ marginTop: 12, background: "#e6ffe6", padding: 8, borderRadius: 6 }}>
+            <strong>Assessment Result:</strong>
+            <div>{assessmentResult}</div>
+          </div>
+        )}
+        <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 12 }}>
+          <button onClick={handleClose} className="btn btn-secondary" disabled={saving}>{saving ? "Saving..." : "Close"}</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function DashboardPage() {
   const [userProfile, setUserProfile] = useState(null);
   const [todaySchedule, setTodaySchedule] = useState([]);
@@ -53,6 +190,8 @@ export default function DashboardPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalTask, setModalTask] = useState(null);
+  const [menuOption, setMenuOption] = useState("log");
+  const [assessmentOpen, setAssessmentOpen] = useState(false);
 
   useEffect(() => {
     // Load user profile
@@ -360,6 +499,8 @@ export default function DashboardPage() {
                           onClick={() => {
                             if (!isCompleted) {
                               setModalTask(item);
+                              // Show the menu when clicking the completion button
+                              setMenuOption(null); // Reset menu selection
                               setModalOpen(true);
                             }
                           }}
@@ -471,12 +612,45 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
-      <ProgressLogModal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        onSubmit={(log) => handleProgressLog(modalTask, log)}
-        task={modalTask}
-      />
+      {/* Menu Modal for Progress Log or AI Assessment, shown only when modalOpen is true */}
+      {modalOpen && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h2>Choose an Action</h2>
+            <div style={{ display: "flex", gap: 12, marginBottom: 24 }}>
+              <button
+                className={`btn ${menuOption === "log" ? "btn-primary" : "btn-secondary"}`}
+                onClick={() => setMenuOption("log")}
+              >
+                Write Progress Log
+              </button>
+              <button
+                className={`btn ${menuOption === "assessment" ? "btn-primary" : "btn-secondary"}`}
+                onClick={() => setMenuOption("assessment")}
+              >
+                Complete AI Assessment
+              </button>
+            </div>
+            <div>
+              {menuOption === "log" && (
+                <ProgressLogModal
+                  open={true}
+                  onClose={() => setModalOpen(false)}
+                  onSubmit={(log) => handleProgressLog(modalTask, log)}
+                  task={modalTask}
+                />
+              )}
+              {menuOption === "assessment" && (
+                <AssessmentModal
+                  open={true}
+                  onClose={() => setModalOpen(false)}
+                  task={modalTask}
+                />
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
