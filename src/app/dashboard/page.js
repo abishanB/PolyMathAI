@@ -49,11 +49,17 @@ function AssessmentModal({ open, onClose, task }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(true);
+  const [assessmentResult, setAssessmentResult] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [question, setQuestion] = useState("");
 
   useEffect(() => {
     if (open && task) {
       setMessages([]);
+      setAssessmentResult(null);
       setLoading(true);
+      setInput("");
+      setQuestion("");
       fetch("/api/generate-assessment-question", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -62,10 +68,12 @@ function AssessmentModal({ open, onClose, task }) {
         .then(res => res.json())
         .then(data => {
           setMessages([{ sender: "ai", text: data.question }]);
+          setQuestion(data.question);
           setLoading(false);
         })
         .catch(() => {
           setMessages([{ sender: "ai", text: "What was your biggest challenge today?" }]);
+          setQuestion("What was your biggest challenge today?");
           setLoading(false);
         });
     }
@@ -73,11 +81,52 @@ function AssessmentModal({ open, onClose, task }) {
 
   if (!open) return null;
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!input.trim()) return;
-    setMessages([...messages, { sender: "user", text: input }]);
+    const userMsg = { sender: "user", text: input };
+    setMessages([...messages, userMsg]);
     setInput("");
-    // Optionally, you could add a fake AI reply here for demo
+    setLoading(true);
+    // Call assessment API
+    try {
+      const res = await fetch("/api/assess-learning", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          question,
+          userResponse: input,
+          task: task.task,
+          skill: task.skill
+        })
+      });
+      const data = await res.json();
+      setAssessmentResult(data.assessment);
+      setMessages([...messages, userMsg, { sender: "ai", text: data.assessment }]);
+    } catch {
+      setAssessmentResult("Assessment not available.");
+      setMessages([...messages, userMsg, { sender: "ai", text: "Assessment not available." }]);
+    }
+    setLoading(false);
+  };
+
+  // Save assessment result to Journal (localStorage)
+  const handleClose = () => {
+    if (assessmentResult && task) {
+      setSaving(true);
+      const logs = JSON.parse(localStorage.getItem("progressLogs") || "[]");
+      logs.push({
+        id: Date.now(),
+        taskId: task.id,
+        skill: task.skill,
+        taskName: task.task,
+        log: `[AI Assessment] ${assessmentResult}`,
+        timestamp: new Date().toISOString(),
+        isAssessment: true
+      });
+      localStorage.setItem("progressLogs", JSON.stringify(logs));
+      setSaving(false);
+    }
+    onClose();
   };
 
   return (
@@ -85,7 +134,7 @@ function AssessmentModal({ open, onClose, task }) {
       <div className="modal" style={{ maxWidth: 400 }}>
         <h2>AI Assessment</h2>
         <div style={{ maxHeight: 200, overflowY: "auto", marginBottom: 12, background: "#f7f7fa", padding: 8, borderRadius: 6 }}>
-          {loading ? (
+          {loading && messages.length === 0 ? (
             <div>Loading question...</div>
           ) : (
             messages.map((msg, idx) => (
@@ -98,22 +147,30 @@ function AssessmentModal({ open, onClose, task }) {
             ))
           )}
         </div>
-        <div style={{ display: "flex", gap: 8 }}>
-          <input
-            type="text"
-            value={input}
-            onChange={e => setInput(e.target.value)}
-            placeholder="Type your answer..."
-            style={{ flex: 1, padding: 6, borderRadius: 4, border: "1px solid #ccc" }}
-            onKeyDown={e => { if (e.key === "Enter") handleSend(); }}
-            disabled={loading}
-          />
-          <button className="btn btn-primary" onClick={handleSend} disabled={!input.trim() || loading}>
-            Send
-          </button>
-        </div>
+        {!assessmentResult && (
+          <div style={{ display: "flex", gap: 8 }}>
+            <input
+              type="text"
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              placeholder="Type your answer..."
+              style={{ flex: 1, padding: 6, borderRadius: 4, border: "1px solid #ccc" }}
+              onKeyDown={e => { if (e.key === "Enter") handleSend(); }}
+              disabled={loading}
+            />
+            <button className="btn btn-primary" onClick={handleSend} disabled={!input.trim() || loading}>
+              Send
+            </button>
+          </div>
+        )}
+        {assessmentResult && (
+          <div style={{ marginTop: 12, background: "#e6ffe6", padding: 8, borderRadius: 6 }}>
+            <strong>Assessment Result:</strong>
+            <div>{assessmentResult}</div>
+          </div>
+        )}
         <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 12 }}>
-          <button onClick={onClose} className="btn btn-secondary">Close</button>
+          <button onClick={handleClose} className="btn btn-secondary" disabled={saving}>{saving ? "Saving..." : "Close"}</button>
         </div>
       </div>
     </div>
