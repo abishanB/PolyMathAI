@@ -125,6 +125,12 @@ function AssessmentModal({ open, onClose, task }) {
       });
       localStorage.setItem("progressLogs", JSON.stringify(logs));
       setSaving(false);
+      // Mark the task as completed
+      const completed = JSON.parse(localStorage.getItem("completedTasks") || "[]");
+      if (!completed.includes(task.id)) {
+        completed.push(task.id);
+        localStorage.setItem("completedTasks", JSON.stringify(completed));
+      }
     }
     onClose();
   };
