@@ -217,6 +217,10 @@ export default function DashboardPage() {
       ? (completedTasks.filter((id) => todaySchedule.some((task) => task.id === id)).length / todaySchedule.length) * 100
       : 0;
 
+  const completedLearningTime = todaySchedule
+    .filter((task) => completedTasks.includes(task.id))
+    .reduce((total, task) => total + task.duration, 0);
+
   if (isLoading) {
     return (
       <div className="dashboard-loading">
@@ -289,7 +293,7 @@ export default function DashboardPage() {
                 <div className="stat-icon stat-icon-blue">⏰</div>
                 <div className="stat-info">
                   <p className="stat-label">Learning Time</p>
-                  <p className="stat-value">{userProfile.availableHours}h</p>
+                  <p className="stat-value">{Math.round(completedLearningTime)}m</p>
                 </div>
               </div>
             </div>
@@ -464,28 +468,6 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            {/* AI Insights */}
-            <div className="sidebar-card">
-              <div className="sidebar-card-header">
-                <h3>AI Insights</h3>
-              </div>
-              <div className="sidebar-card-content">
-                <div className="insights">
-                  <div className="insight insight-blue">
-                    <p className="insight-title">Optimization Tip</p>
-                    <p className="insight-text">
-                      Consider practicing guitar before coding - physical activities can improve focus for mental tasks.
-                    </p>
-                  </div>
-                  <div className="insight insight-green">
-                    <p className="insight-title">Progress Note</p>
-                    <p className="insight-text">
-                      You're maintaining a great learning streak! Your consistency is paying off.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
